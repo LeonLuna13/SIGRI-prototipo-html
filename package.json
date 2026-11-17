@@ -1,0 +1,9 @@
+{
+  "name": "sigri-prototipo",
+  "version": "1.0.0",
+  "description": "Prototipo funcional SIGRI - Sistema de Gestión de Riesgo de Inundaciones (Defensa Civil · La Plata)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
