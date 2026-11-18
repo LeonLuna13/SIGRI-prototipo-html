@@ -123,8 +123,8 @@
       Activo: 'background:#DCF2E3;color:#14532D;border:1.5px solid transparent',
       'En mantenimiento': 'background:#FDEBC8;color:#7A3E00;border:1.5px solid transparent',
       Desconectado: 'background:#F8DCDC;color:#7A1414;border:1.5px solid transparent',
-      Inactivo: 'background:#E8EAEF;color:#3F4550;border:1.5px solid transparent',
-      Baja: 'background:#FFFFFF;color:#3F4550;border:1.5px solid #8A909C'
+      Inactivo: 'background:#EAE3D6;color:#524337;border:1.5px solid transparent',
+      Baja: 'background:#FFFFFF;color:#524337;border:1.5px solid #8A909C'
     };
     const st = styles[estado] || styles.Inactivo;
     return `<span style="display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:999px;${st};font-size:12px;font-weight:700;white-space:nowrap">${escapeHtml(estado)}</span>`;
@@ -134,9 +134,9 @@
     const styles = {
       Activa: 'background:#F8DCDC;color:#7A1414;border:1.5px solid transparent',
       'En análisis': 'background:#FDEBC8;color:#7A3E00;border:1.5px solid transparent',
-      Atendida: 'background:#DBE7FE;color:#1E3A8A;border:1.5px solid transparent',
-      Cerrada: 'background:#E8EAEF;color:#3F4550;border:1.5px solid transparent',
-      Descartada: 'background:#FFFFFF;color:#3F4550;border:1.5px solid #8A909C'
+      Atendida: 'background:#E0F2FE;color:#0369A1;border:1.5px solid transparent',
+      Cerrada: 'background:#EAE3D6;color:#524337;border:1.5px solid transparent',
+      Descartada: 'background:#FFFFFF;color:#524337;border:1.5px solid #8A909C'
     };
     const st = styles[estado] || styles.Activa;
     return `<span style="display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:999px;${st};font-size:12px;font-weight:700;white-space:nowrap">${escapeHtml(estado)}</span>`;
@@ -144,8 +144,8 @@
 
   function badgeOrigenHtml(origen) {
     const st = origen === 'Automática'
-      ? 'background:#DBE7FE;color:#1E3A8A;border:1.5px solid transparent'
-      : 'background:#FFFFFF;color:#3F4550;border:1.5px solid #8A909C';
+      ? 'background:#E0F2FE;color:#0369A1;border:1.5px solid transparent'
+      : 'background:#FFFFFF;color:#524337;border:1.5px solid #8A909C';
     return `<span style="display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:999px;${st};font-size:12px;font-weight:700;white-space:nowrap">${escapeHtml(origen)}</span>`;
   }
 
@@ -157,7 +157,7 @@
     if (m.evaluacionTipo === 'ok') {
       return `<span style="display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:999px;border:1.5px solid transparent;background:#DCF2E3;color:#14532D;font-size:12px;font-weight:700;white-space:nowrap">${escapeHtml(m.evaluacionTexto)}</span>`;
     }
-    return `<span style="display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:999px;border:1.5px solid transparent;background:#E8EAEF;color:#3F4550;font-size:12px;font-weight:700;white-space:nowrap">${escapeHtml(m.evaluacionTexto)}</span>`;
+    return `<span style="display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:999px;border:1.5px solid transparent;background:#EAE3D6;color:#524337;font-size:12px;font-weight:700;white-space:nowrap">${escapeHtml(m.evaluacionTexto)}</span>`;
   }
 
   // ---------------- SVG ICONS ----------------
@@ -679,19 +679,19 @@
 
     const overlay = document.createElement('div');
     overlay.id = 'sigri-dynamic-modal';
-    overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;padding:24px;box-sizing:border-box;background:rgba(20,27,45,0.72);display:flex;align-items:center;justify-content:center;font-family:"Manrope",system-ui,sans-serif;color:#14171F;font-size:15px;line-height:1.4';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;padding:24px;box-sizing:border-box;background:rgba(42,27,18,0.72);display:flex;align-items:center;justify-content:center;font-family:"Manrope",system-ui,sans-serif;color:#2B1D14;font-size:15px;line-height:1.4';
     overlay.innerHTML = `
-      <div role="dialog" aria-modal="true" style="width:640px;max-width:100%;box-sizing:border-box;background:#FFFFFF;border-radius:28px;border-top:8px solid #1D3A8A;padding:32px 36px 36px;display:flex;flex-direction:column;gap:18px;box-shadow:0 24px 60px rgba(8,14,32,0.45)">
+      <div role="dialog" aria-modal="true" style="width:640px;max-width:100%;box-sizing:border-box;background:#FFFFFF;border-radius:28px;border-top:8px solid #0284C7;padding:32px 36px 36px;display:flex;flex-direction:column;gap:18px;box-shadow:0 24px 60px rgba(45,29,19,0.35)">
         <div style="display:flex;flex-direction:column;gap:2px"><h2 style="margin:0;font-size:26px;font-weight:800;letter-spacing:-0.01em">${escapeHtml(titulo)}</h2></div>
         <div style="display:flex;gap:20px;align-items:center">
           <div style="flex:0 0 84px;height:84px;border-radius:50%;background:#B45309;color:#FFFFFF;display:flex;align-items:center;justify-content:center">${ICONS.warnLg}</div>
           <div style="display:flex;flex-direction:column;gap:6px">
             <span style="font-size:20px;font-weight:800">${escapeHtml(pregunta)}</span>
-            <span style="color:#3F4550;font-size:16px">${escapeHtml(detalle)}</span>
+            <span style="color:#524337;font-size:16px">${escapeHtml(detalle)}</span>
           </div>
         </div>
         <div style="display:flex;gap:14px;margin-top:6px">
-          <button type="button" data-action="cancel" style="flex:1 1 0;height:60px;border:none;border-radius:16px;font-family:'Manrope',system-ui,sans-serif;font-size:17px;font-weight:800;background:#E8EAEF;color:#14171F;cursor:pointer">No, volver</button>
+          <button type="button" data-action="cancel" style="flex:1 1 0;height:60px;border:none;border-radius:16px;font-family:'Manrope',system-ui,sans-serif;font-size:17px;font-weight:800;background:#EAE3D6;color:#2B1D14;cursor:pointer">No, volver</button>
           <button type="button" data-action="confirm" style="flex:1 1 0;height:60px;border:none;border-radius:16px;font-family:'Manrope',system-ui,sans-serif;font-size:17px;font-weight:800;background:#8B1A1A;color:#FFFFFF;cursor:pointer">${escapeHtml(textoConfirmar)}</button>
         </div>
       </div>
@@ -712,16 +712,16 @@
     if (existing) existing.remove();
     const overlay = document.createElement('div');
     overlay.id = 'sigri-dynamic-modal';
-    overlay.style.cssText = 'position:fixed;inset:0;z-index:10000;padding:24px;box-sizing:border-box;background:rgba(20,27,45,0.72);display:flex;align-items:center;justify-content:center;font-family:"Manrope",system-ui,sans-serif;color:#14171F;font-size:15px;line-height:1.4';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:10000;padding:24px;box-sizing:border-box;background:rgba(42,27,18,0.72);display:flex;align-items:center;justify-content:center;font-family:"Manrope",system-ui,sans-serif;color:#2B1D14;font-size:15px;line-height:1.4';
     overlay.innerHTML = `
-      <div role="dialog" aria-modal="true" style="width:560px;max-width:100%;box-sizing:border-box;background:#FFFFFF;border-radius:28px;border-top:8px solid #B45309;padding:32px 36px 36px;display:flex;flex-direction:column;gap:18px;box-shadow:0 24px 60px rgba(8,14,32,0.45)">
+      <div role="dialog" aria-modal="true" style="width:560px;max-width:100%;box-sizing:border-box;background:#FFFFFF;border-radius:28px;border-top:8px solid #B45309;padding:32px 36px 36px;display:flex;flex-direction:column;gap:18px;box-shadow:0 24px 60px rgba(45,29,19,0.35)">
         <div style="display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center">
           <div style="width:84px;height:84px;border-radius:50%;background:#B45309;color:#FFFFFF;display:flex;align-items:center;justify-content:center">${ICONS.warnLg}</div>
           <span style="display:inline-flex;align-items:center;height:28px;padding:0 14px;border-radius:999px;background:#FDEBC8;color:#7A3E00;font-size:13px;font-weight:800;letter-spacing:0.1em">ADVERTENCIA</span>
           <h2 style="margin:0;font-size:24px;font-weight:800">${escapeHtml(titulo)}</h2>
-          <p style="margin:0;color:#3F4550;font-size:16px">${escapeHtml(mensaje)}</p>
+          <p style="margin:0;color:#524337;font-size:16px">${escapeHtml(mensaje)}</p>
         </div>
-        <button type="button" data-action="ok" style="height:56px;border:none;border-radius:16px;font-family:'Manrope',system-ui,sans-serif;font-size:17px;font-weight:800;background:#1D3A8A;color:#FFFFFF;cursor:pointer">Aceptar</button>
+        <button type="button" data-action="ok" style="height:56px;border:none;border-radius:16px;font-family:'Manrope',system-ui,sans-serif;font-size:17px;font-weight:800;background:#0284C7;color:#FFFFFF;cursor:pointer">Aceptar</button>
       </div>
     `;
     document.body.appendChild(overlay);
@@ -750,13 +750,13 @@
       const active = btn.textContent.trim() === selectedText;
       btn.setAttribute('aria-pressed', active ? 'true' : 'false');
       if (active) {
-        btn.style.background = '#1D3A8A';
+        btn.style.background = '#0284C7';
         btn.style.color = '#FFFFFF';
-        btn.style.border = '2px solid #1D3A8A';
+        btn.style.border = '2px solid #0284C7';
       } else {
         btn.style.background = '#FFFFFF';
-        btn.style.color = '#14171F';
-        btn.style.border = '1.5px solid #C9CED8';
+        btn.style.color = '#2B1D14';
+        btn.style.border = '1.5px solid #D4C9BA';
       }
     });
   }
@@ -803,7 +803,7 @@
         transition: background-color 0.14s ease;
       }
       [data-row-selectable]:hover {
-        background-color: #F7F9FD;
+        background-color: #EFE9DF;
       }
     `;
     document.head.appendChild(style);
@@ -838,23 +838,23 @@
       aside.style.cssText = 'flex:1 0 360px;max-width:440px;min-width:310px;position:sticky;top:24px;display:flex;flex-direction:column;gap:14px';
 
       aside.innerHTML = `
-        <section style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:12px">
+        <section style="background:#FFFFFF;border:1px solid #E5DDD0;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:12px">
           <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
             <div style="display:flex;flex-direction:column;gap:2px">
               <h2 style="margin:0;font-size:16px;font-weight:800">Mapa de ubicación</h2>
-              <span style="color:#555B66;font-size:12px">${escapeHtml(opts.subtitle || 'Seleccioná un elemento de la lista para ubicarlo')}</span>
+              <span style="color:#6F5E51;font-size:12px">${escapeHtml(opts.subtitle || 'Seleccioná un elemento de la lista para ubicarlo')}</span>
             </div>
             <div style="display:flex;align-items:center;gap:6px">
-              <button type="button" data-minimap-reset style="height:32px;padding:0 10px;border:none;border-radius:8px;background:#EEF0F4;color:#14171F;font-family:'Manrope',system-ui,sans-serif;font-size:12px;font-weight:700;cursor:pointer">Ver todo</button>
-              <a href="index.html" title="Abrir mapa completo" style="display:inline-flex;align-items:center;justify-content:center;height:32px;padding:0 10px;border-radius:8px;background:#FFFFFF;color:#1D3A8A;box-shadow:inset 0 0 0 1.5px #1D3A8A;font-size:12px;font-weight:700;white-space:nowrap">Ampliar</a>
+              <button type="button" data-minimap-reset style="height:32px;padding:0 10px;border:none;border-radius:8px;background:#EAE3D6;color:#2B1D14;font-family:'Manrope',system-ui,sans-serif;font-size:12px;font-weight:700;cursor:pointer">Ver todo</button>
+              <a href="index.html" title="Abrir mapa completo" style="display:inline-flex;align-items:center;justify-content:center;height:32px;padding:0 10px;border-radius:8px;background:#FFFFFF;color:#0284C7;box-shadow:inset 0 0 0 1.5px #0284C7;font-size:12px;font-weight:700;white-space:nowrap">Ampliar</a>
             </div>
           </div>
-          <div data-minimap-box style="position:relative;height:360px;border-radius:12px;border:1px solid #CDD2DA;overflow:hidden;background:#EDEFE8">
+          <div data-minimap-box style="position:relative;height:360px;border-radius:12px;border:1px solid #D6CCBE;overflow:hidden;background:#F3EFE6">
             <div data-minimap-viewport style="position:absolute;inset:0;transform-origin:center center;transition:transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);cursor:grab">
               <svg aria-hidden="true" width="100%" height="100%" viewBox="0 0 820 640" preserveAspectRatio="none" style="position:absolute;inset:0;display:block">
                 <defs>
                   <pattern id="sigri-mini-calles" width="26" height="26" patternUnits="userSpaceOnUse" patternTransform="rotate(45 410 320)">
-                    <rect width="26" height="26" fill="#EDEFE8"/>
+                    <rect width="26" height="26" fill="#F3EFE6"/>
                     <path d="M0 0h26M0 0v26" stroke="#FFFFFF" stroke-width="3"/>
                   </pattern>
                 </defs>
@@ -874,17 +874,17 @@
               <div data-layer="seleccion" style="pointer-events:none"></div>
               <div data-layer="alertas"></div>
             </div>
-            <div style="position:absolute;left:10px;top:10px;z-index:10;display:flex;flex-direction:column;background:#FFFFFF;border:1px solid #CDD2DA;border-radius:10px;overflow:hidden;box-shadow:0 2px 6px rgba(16,27,54,0.16)">
-              <button type="button" data-minimap-zoom-in aria-label="Acercar" style="width:34px;height:34px;border:none;background:#FFFFFF;color:#14171F;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;font-weight:800;font-size:16px">+</button>
-              <button type="button" data-minimap-zoom-out aria-label="Alejar" style="width:34px;height:34px;border:none;border-top:1px solid #E2E5EA;background:#FFFFFF;color:#14171F;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;font-weight:800;font-size:16px">−</button>
+            <div style="position:absolute;left:10px;top:10px;z-index:10;display:flex;flex-direction:column;background:#FFFFFF;border:1px solid #D6CCBE;border-radius:10px;overflow:hidden;box-shadow:0 2px 6px rgba(45,29,19,0.15)">
+              <button type="button" data-minimap-zoom-in aria-label="Acercar" style="width:34px;height:34px;border:none;background:#FFFFFF;color:#2B1D14;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;font-weight:800;font-size:16px">+</button>
+              <button type="button" data-minimap-zoom-out aria-label="Alejar" style="width:34px;height:34px;border:none;border-top:1px solid #E5DDD0;background:#FFFFFF;color:#2B1D14;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;font-weight:800;font-size:16px">−</button>
             </div>
-            <div style="position:absolute;left:10px;bottom:10px;z-index:10;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.94);border:1px solid #CDD2DA;border-radius:8px;padding:4px 8px">
-              <span data-minimap-coords style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;color:#14171F">Lat -34.915000 · Lon -57.948000</span>
+            <div style="position:absolute;left:10px;bottom:10px;z-index:10;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.94);border:1px solid #D6CCBE;border-radius:8px;padding:4px 8px">
+              <span data-minimap-coords style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;color:#2B1D14">Lat -34.915000 · Lon -57.948000</span>
             </div>
-            <span data-minimap-scale style="position:absolute;right:10px;bottom:10px;z-index:10;background:rgba(255,255,255,0.92);border:1px solid #CDD2DA;border-radius:6px;padding:2px 7px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;color:#14171F">1 km</span>
+            <span data-minimap-scale style="position:absolute;right:10px;bottom:10px;z-index:10;background:rgba(255,255,255,0.92);border:1px solid #D6CCBE;border-radius:6px;padding:2px 7px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;color:#2B1D14">1 km</span>
           </div>
-          <div data-minimap-detail style="background:#FAFBFC;border:1px solid #E2E5EA;border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:6px">
-            <span style="color:#555B66;font-size:13px">Hacé clic en una fila de la lista para marcarla y acercar el mapa.</span>
+          <div data-minimap-detail style="background:#FAF7F2;border:1px solid #E5DDD0;border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:6px">
+            <span style="color:#6F5E51;font-size:13px">Hacé clic en una fila de la lista para marcarla y acercar el mapa.</span>
           </div>
         </section>
       `;
@@ -965,9 +965,9 @@
           highlightZonaIds: new Set(),
           highlightSensores: new Set(),
           highlightRefugios: new Set(),
-          pulseColor: '#1D3A8A',
+          pulseColor: '#0284C7',
           pulsePoints: [],
-          detailHtml: '<span style="color:#555B66;font-size:13px">Vista general de La Plata. Hacé clic en una fila de la tabla para ubicarla en el mapa.</span>'
+          detailHtml: '<span style="color:#6F5E51;font-size:13px">Vista general de La Plata. Hacé clic en una fila de la tabla para ubicarla en el mapa.</span>'
         };
       }
 
@@ -975,7 +975,7 @@
       const highlightSensores = new Set();
       const highlightRefugios = new Set();
       const pulsePoints = [];
-      let pulseColor = '#1D3A8A';
+      let pulseColor = '#0284C7';
       let focusLat = null;
       let focusLon = null;
       let focusZoom = 1.65;
@@ -996,8 +996,8 @@
               <span style="font-weight:800;font-size:14px">${escapeHtml(z.nombre)}</span>
               ${badgeNivelHtml(z.nivelRiesgo)}
             </div>
-            <span style="color:#555B66;font-size:12px">${escapeHtml(z.descripcion || 'Sin descripción')}</span>
-            <div style="display:flex;justify-content:space-between;gap:8px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;color:#3F4550">
+            <span style="color:#6F5E51;font-size:12px">${escapeHtml(z.descripcion || 'Sin descripción')}</span>
+            <div style="display:flex;justify-content:space-between;gap:8px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;color:#524337">
               <span>Radio ${escapeHtml(formatMeters(z.radio))} m</span>
               <span>${z.sensoresCount} ${z.sensoresCount === 1 ? 'sensor' : 'sensores'}</span>
             </div>
@@ -1011,7 +1011,7 @@
           focusLat = s.lat;
           focusLon = s.lon;
           focusZoom = 1.75;
-          pulseColor = s.estado === 'Activo' ? '#1D3A8A' : s.estado === 'Desconectado' ? '#8B1A1A' : '#5B6170';
+          pulseColor = s.estado === 'Activo' ? '#0284C7' : s.estado === 'Desconectado' ? '#8B1A1A' : '#5B6170';
           pulsePoints.push({ lat: s.lat, lon: s.lon, size: 42 });
           const zonasTxt = s.zonasNombres.length ? s.zonasNombres.join(', ') : 'Sin zona asociada';
           const medTxt = s.ultimaMedicion
@@ -1025,10 +1025,10 @@
               </div>
               ${badgeEstadoSensorHtml(s.estado)}
             </div>
-            <span style="color:#555B66;font-size:12px">${escapeHtml(zonasTxt)}</span>
+            <span style="color:#6F5E51;font-size:12px">${escapeHtml(zonasTxt)}</span>
             <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
-              <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;color:#3F4550">Última: ${escapeHtml(medTxt)}</span>
-              <a href="DlgMedicion.html?sensor=${encodeURIComponent(s.codigo)}" style="font-size:12px;font-weight:700;color:#1D3A8A">Cargar medición →</a>
+              <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;color:#524337">Última: ${escapeHtml(medTxt)}</span>
+              <a href="DlgMedicion.html?sensor=${encodeURIComponent(s.codigo)}" style="font-size:12px;font-weight:700;color:#0284C7">Cargar medición →</a>
             </div>
           `;
         }
@@ -1042,7 +1042,7 @@
             focusLat = s.lat;
             focusLon = s.lon;
             focusZoom = 1.75;
-            pulseColor = m.evaluacionTipo === 'alerta' ? '#8B1A1A' : '#1D3A8A';
+            pulseColor = m.evaluacionTipo === 'alerta' ? '#8B1A1A' : '#0284C7';
             pulsePoints.push({ lat: s.lat, lon: s.lon, size: 42 });
           }
           detailHtml = `
@@ -1050,9 +1050,9 @@
               <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:800;font-size:14px">${escapeHtml(m.sensorCodigo)} · ${escapeHtml(formatValorUnidad(m.valor, m.unidad))}</span>
               ${badgeOrigenHtml(m.origen)}
             </div>
-            <span style="color:#555B66;font-size:12px">${escapeHtml(m.tipo)} · ${escapeHtml(m.zonaNombre)}</span>
+            <span style="color:#6F5E51;font-size:12px">${escapeHtml(m.tipo)} · ${escapeHtml(m.zonaNombre)}</span>
             <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
-              <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;color:#3F4550">${escapeHtml(m.fechaHora)}</span>
+              <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;color:#524337">${escapeHtml(m.fechaHora)}</span>
               ${badgeEvaluacionHtml(m)}
             </div>
           `;
@@ -1079,8 +1079,8 @@
               <span style="font-weight:800;font-size:14px">${escapeHtml(u.zonaNombre)}</span>
               ${badgeNivelHtml(u.nivelAlerta)}
             </div>
-            <span style="color:#555B66;font-size:12px">Tipo de sensor: <strong>${escapeHtml(u.tipo)}</strong></span>
-            <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;color:#3F4550">Mín: ${escapeHtml(minTxt)} · Máx: ${escapeHtml(maxTxt)}</span>
+            <span style="color:#6F5E51;font-size:12px">Tipo de sensor: <strong>${escapeHtml(u.tipo)}</strong></span>
+            <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;color:#524337">Mín: ${escapeHtml(minTxt)} · Máx: ${escapeHtml(maxTxt)}</span>
           `;
         }
       } else if (target.type === 'alerta') {
@@ -1112,7 +1112,7 @@
               ${badgeEstadoAlertaHtml(a.estado)}
             </div>
             <span style="font-weight:700;font-size:13px">${escapeHtml(a.zonaNombre)}</span>
-            <span style="color:#555B66;font-size:12px">${escapeHtml(a.sensorCodigo)} · ${escapeHtml(a.condicion)} (${escapeHtml(formatValorUnidad(a.valor, a.unidad))})</span>
+            <span style="color:#6F5E51;font-size:12px">${escapeHtml(a.sensorCodigo)} · ${escapeHtml(a.condicion)} (${escapeHtml(formatValorUnidad(a.valor, a.unidad))})</span>
           `;
         }
       } else if (target.type === 'refugio') {
@@ -1126,8 +1126,8 @@
           pulsePoints.push({ lat: r.lat, lon: r.lon, size: 42 });
           detailHtml = `
             <span style="font-weight:800;font-size:14px;color:#0F5F56">${escapeHtml(r.nombre)}</span>
-            <span style="color:#3F4550;font-size:12px">${escapeHtml(r.descripcion || 'Sin descripción')}</span>
-            <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;color:#555B66">${escapeHtml(formatCoords(r.lat, r.lon))}</span>
+            <span style="color:#524337;font-size:12px">${escapeHtml(r.descripcion || 'Sin descripción')}</span>
+            <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;color:#6F5E51">${escapeHtml(formatCoords(r.lat, r.lon))}</span>
           `;
         }
       }
@@ -1141,7 +1141,7 @@
         highlightRefugios,
         pulseColor,
         pulsePoints,
-        detailHtml: detailHtml || '<span style="color:#555B66;font-size:13px">Elemento no encontrado en el mapa.</span>'
+        detailHtml: detailHtml || '<span style="color:#6F5E51;font-size:13px">Elemento no encontrado en el mapa.</span>'
       };
     };
 
@@ -1166,8 +1166,8 @@
         const isHi = info.highlightZonaIds.has(z.id);
         const opacity = hasSel ? (isHi ? '1' : '0.35') : '1';
         const borderW = isHi ? '3px' : '2px';
-        const shadow = isHi ? `0 0 0 4px rgba(29,58,138,0.18)` : 'none';
-        return `<div data-minimap-zona="${escapeHtml(z.id)}" title="${escapeHtml(z.nombre)}" style="position:absolute;left:${p.leftPct.toFixed(1)}%;top:${p.topPct.toFixed(1)}%;width:${size}px;height:${size}px;margin-left:-${half}px;margin-top:-${half}px;border-radius:50%;border:${borderW} solid ${c.border};background:${c.bg};box-sizing:border-box;opacity:${opacity};box-shadow:${shadow};cursor:pointer;transition:opacity 0.2s"><div style="position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:3px;display:flex;align-items:center;gap:4px;white-space:nowrap;background:#FFFFFF;border:1px solid ${isHi ? c.border : '#D5D9E0'};border-radius:6px;padding:1px 4px 1px 6px;font-size:10px;font-weight:700">${escapeHtml(z.nombre.split('–')[0].trim())}<span style="padding:0 4px;border-radius:4px;background:${c.badgeBg};color:#FFFFFF;font-size:9px">${c.label}</span></div></div>`;
+        const shadow = isHi ? `0 0 0 4px rgba(2,132,199,0.25)` : 'none';
+        return `<div data-minimap-zona="${escapeHtml(z.id)}" title="${escapeHtml(z.nombre)}" style="position:absolute;left:${p.leftPct.toFixed(1)}%;top:${p.topPct.toFixed(1)}%;width:${size}px;height:${size}px;margin-left:-${half}px;margin-top:-${half}px;border-radius:50%;border:${borderW} solid ${c.border};background:${c.bg};box-sizing:border-box;opacity:${opacity};box-shadow:${shadow};cursor:pointer;transition:opacity 0.2s"><div style="position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:3px;display:flex;align-items:center;gap:4px;white-space:nowrap;background:#FFFFFF;border:1px solid ${isHi ? c.border : '#D4C9BA'};border-radius:6px;padding:1px 4px 1px 6px;font-size:10px;font-weight:700">${escapeHtml(z.nombre.split('–')[0].trim())}<span style="padding:0 4px;border-radius:4px;background:${c.badgeBg};color:#FFFFFF;font-size:9px">${c.label}</span></div></div>`;
       }).join('');
 
       // Show non-Baja sensors, plus the currently selected sensor even if it is Baja
@@ -1179,10 +1179,10 @@
         const isHi = info.highlightSensores.has(s.codigo);
         const bg = isHi && selectedTarget?.type === 'alerta'
           ? '#8B1A1A'
-          : (s.estado === 'Activo' ? '#1D3A8A' : '#5B6170');
+          : (s.estado === 'Activo' ? '#0284C7' : '#5B6170');
         const opacity = hasSel ? (isHi ? '1' : '0.4') : '1';
         const scale = isHi ? 'transform:translate(-50%,-13px) scale(1.18);z-index:5;' : 'transform:translate(-50%,-13px);';
-        return `<div style="position:absolute;left:${p.leftPct.toFixed(1)}%;top:${p.topPct.toFixed(1)}%;${scale}display:flex;flex-direction:column;align-items:center;gap:1px;opacity:${opacity};transition:opacity 0.2s"><button type="button" data-minimap-sensor="${escapeHtml(s.codigo)}" aria-label="Sensor ${escapeHtml(s.codigo)}" style="width:26px;height:26px;border-radius:50%;border:2px solid #FFFFFF;background:${bg};color:#FFFFFF;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;box-shadow:0 1px 4px rgba(16,27,54,0.35)"><svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20v-8"/><circle cx="12" cy="9" r="2"/><path d="M7.5 13.5a6.5 6.5 0 0 1 0-9"/><path d="M16.5 4.5a6.5 6.5 0 0 1 0 9"/></svg></button><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10px;font-weight:700;background:#FFFFFF;border:${isHi ? '1.5px solid ' + bg : '1px solid #D5D9E0'};border-radius:4px;padding:0 3px">${escapeHtml(s.codigo)}</span></div>`;
+        return `<div style="position:absolute;left:${p.leftPct.toFixed(1)}%;top:${p.topPct.toFixed(1)}%;${scale}display:flex;flex-direction:column;align-items:center;gap:1px;opacity:${opacity};transition:opacity 0.2s"><button type="button" data-minimap-sensor="${escapeHtml(s.codigo)}" aria-label="Sensor ${escapeHtml(s.codigo)}" style="width:26px;height:26px;border-radius:50%;border:2px solid #FFFFFF;background:${bg};color:#FFFFFF;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;box-shadow:0 1px 4px rgba(45,29,19,0.30)"><svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20v-8"/><circle cx="12" cy="9" r="2"/><path d="M7.5 13.5a6.5 6.5 0 0 1 0-9"/><path d="M16.5 4.5a6.5 6.5 0 0 1 0 9"/></svg></button><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10px;font-weight:700;background:#FFFFFF;border:${isHi ? '1.5px solid ' + bg : '1px solid #D4C9BA'};border-radius:4px;padding:0 3px">${escapeHtml(s.codigo)}</span></div>`;
       }).join('');
 
       layerRefugios.innerHTML = currentState.refugios.map((r) => {
@@ -1190,7 +1190,7 @@
         const isHi = info.highlightRefugios.has(r.id);
         const opacity = hasSel ? (isHi ? '1' : '0.4') : '1';
         const scale = isHi ? 'transform:translate(-50%,-13px) scale(1.18);z-index:5;' : 'transform:translate(-50%,-13px);';
-        return `<div style="position:absolute;left:${p.leftPct.toFixed(1)}%;top:${p.topPct.toFixed(1)}%;${scale}display:flex;flex-direction:column;align-items:center;gap:1px;opacity:${opacity};transition:opacity 0.2s"><button type="button" data-minimap-refugio="${escapeHtml(r.id)}" aria-label="Refugio ${escapeHtml(r.nombre)}" style="width:26px;height:26px;border-radius:7px;border:2px solid #FFFFFF;background:#0F5F56;color:#FFFFFF;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;box-shadow:0 1px 4px rgba(16,27,54,0.35)"><svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></button><span style="font-size:10px;font-weight:700;background:#FFFFFF;border:${isHi ? '1.5px solid #0F5F56' : '1px solid #D5D9E0'};border-radius:4px;padding:0 3px;white-space:nowrap">${escapeHtml(r.nombre)}</span></div>`;
+        return `<div style="position:absolute;left:${p.leftPct.toFixed(1)}%;top:${p.topPct.toFixed(1)}%;${scale}display:flex;flex-direction:column;align-items:center;gap:1px;opacity:${opacity};transition:opacity 0.2s"><button type="button" data-minimap-refugio="${escapeHtml(r.id)}" aria-label="Refugio ${escapeHtml(r.nombre)}" style="width:26px;height:26px;border-radius:7px;border:2px solid #FFFFFF;background:#0F5F56;color:#FFFFFF;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;box-shadow:0 1px 4px rgba(45,29,19,0.30)"><svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></button><span style="font-size:10px;font-weight:700;background:#FFFFFF;border:${isHi ? '1.5px solid #0F5F56' : '1px solid #D4C9BA'};border-radius:4px;padding:0 3px;white-space:nowrap">${escapeHtml(r.nombre)}</span></div>`;
       }).join('');
 
       layerAlertas.innerHTML = currentState.zonas
@@ -1199,12 +1199,12 @@
           const p = project(z.lat, z.lon);
           const rPx = Math.max(12, Math.round((z.diametro * 0.045) / 2));
           const isHi = !hasSel || info.highlightZonaIds.has(z.id);
-          return `<div style="position:absolute;left:calc(${p.leftPct.toFixed(1)}% + ${Math.round(rPx * 0.45)}px);top:max(8px, calc(${p.topPct.toFixed(1)}% - ${Math.round(rPx * 0.85)}px));display:flex;align-items:center;gap:4px;height:22px;padding:0 7px;border-radius:999px;background:#8B1A1A;color:#FFFFFF;font-weight:800;font-size:11px;border:1.5px solid #FFFFFF;box-shadow:0 2px 5px rgba(16,27,54,0.35);pointer-events:none;opacity:${isHi ? '1' : '0.35'}">${z.alertasActivasCount} ${z.alertasActivasCount === 1 ? 'alerta' : 'alertas'}</div>`;
+          return `<div style="position:absolute;left:calc(${p.leftPct.toFixed(1)}% + ${Math.round(rPx * 0.45)}px);top:max(8px, calc(${p.topPct.toFixed(1)}% - ${Math.round(rPx * 0.85)}px));display:flex;align-items:center;gap:4px;height:22px;padding:0 7px;border-radius:999px;background:#8B1A1A;color:#FFFFFF;font-weight:800;font-size:11px;border:1.5px solid #FFFFFF;box-shadow:0 2px 5px rgba(45,29,19,0.30);pointer-events:none;opacity:${isHi ? '1' : '0.35'}">${z.alertasActivasCount} ${z.alertasActivasCount === 1 ? 'alerta' : 'alertas'}</div>`;
         }).join('');
 
       layerSeleccion.innerHTML = info.pulsePoints.map((pt) => {
         const p = project(pt.lat, pt.lon);
-        return `<div class="sigri-pulse-ring" style="position:absolute;left:${p.leftPct.toFixed(1)}%;top:${p.topPct.toFixed(1)}%;width:${pt.size}px;height:${pt.size}px;border-radius:50%;border:3px solid ${info.pulseColor};background:rgba(29,58,138,0.10)"></div>`;
+        return `<div class="sigri-pulse-ring" style="position:absolute;left:${p.leftPct.toFixed(1)}%;top:${p.topPct.toFixed(1)}%;width:${pt.size}px;height:${pt.size}px;border-radius:50%;border:3px solid ${info.pulseColor};background:rgba(2,132,199,0.12)"></div>`;
       }).join('');
 
       if (detailEl) detailEl.innerHTML = info.detailHtml;
@@ -1308,8 +1308,8 @@
 
   function applyRowSelectionStyle(row, isSelected) {
     if (isSelected) {
-      row.style.backgroundColor = '#F3F6FE';
-      row.style.boxShadow = 'inset 4px 0 0 #1D3A8A';
+      row.style.backgroundColor = '#EBF5FA';
+      row.style.boxShadow = 'inset 4px 0 0 #0284C7';
     } else {
       row.style.backgroundColor = '';
       row.style.boxShadow = '';
@@ -1360,7 +1360,7 @@
       const size = Math.max(36, Math.round(z.diametro * 0.082));
       const half = Math.round(size / 2);
       const c = zonaColors[z.nivelRiesgo] || zonaColors.Bajo;
-      return `<div style="position:absolute;left:${p.leftPct.toFixed(1)}%;top:${p.topPct.toFixed(1)}%;width:${size}px;height:${size}px;margin-left:-${half}px;margin-top:-${half}px;border-radius:50%;border:2.5px solid ${c.border};background:${c.bg};box-sizing:border-box"><div style="position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:6px;display:flex;align-items:center;gap:6px;white-space:nowrap;background:#FFFFFF;border:1px solid #D5D9E0;border-radius:8px;padding:3px 4px 3px 8px;font-size:12px;font-weight:700">${escapeHtml(z.nombre)}<span style="padding:1px 6px;border-radius:6px;background:${c.badgeBg};color:#FFFFFF;font-size:11px;letter-spacing:0.04em">${c.label}</span></div></div>`;
+      return `<div style="position:absolute;left:${p.leftPct.toFixed(1)}%;top:${p.topPct.toFixed(1)}%;width:${size}px;height:${size}px;margin-left:-${half}px;margin-top:-${half}px;border-radius:50%;border:2.5px solid ${c.border};background:${c.bg};box-sizing:border-box"><div style="position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:6px;display:flex;align-items:center;gap:6px;white-space:nowrap;background:#FFFFFF;border:1px solid #D9CEBF;border-radius:8px;padding:3px 4px 3px 8px;font-size:12px;font-weight:700">${escapeHtml(z.nombre)}<span style="padding:1px 6px;border-radius:6px;background:${c.badgeBg};color:#FFFFFF;font-size:11px;letter-spacing:0.04em">${c.label}</span></div></div>`;
     }).join('');
 
     // Render Sensores (todos menos Baja)
@@ -1368,14 +1368,14 @@
       .filter((s) => s.estado !== 'Baja')
       .map((s) => {
         const p = project(s.lat, s.lon);
-        const bg = s.estado === 'Activo' ? '#1D3A8A' : '#5B6170';
-        return `<div style="position:absolute;left:${p.leftPct.toFixed(1)}%;top:${p.topPct.toFixed(1)}%;transform:translate(-50%,-18px);display:flex;flex-direction:column;align-items:center;gap:2px"><button type="button" data-map-sensor="${escapeHtml(s.codigo)}" aria-label="Sensor ${escapeHtml(s.codigo)}, ${escapeHtml(s.estado.toLowerCase())}" style="width:36px;height:36px;border-radius:50%;border:2.5px solid #FFFFFF;background:${bg};color:#FFFFFF;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;box-shadow:0 1px 4px rgba(16,27,54,0.35)">${ICONS.sensor}</button><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;font-weight:700;background:#FFFFFF;border-radius:4px;padding:0 4px">${escapeHtml(s.codigo)}</span></div>`;
+        const bg = s.estado === 'Activo' ? '#0284C7' : '#5B6170';
+        return `<div style="position:absolute;left:${p.leftPct.toFixed(1)}%;top:${p.topPct.toFixed(1)}%;transform:translate(-50%,-18px);display:flex;flex-direction:column;align-items:center;gap:2px"><button type="button" data-map-sensor="${escapeHtml(s.codigo)}" aria-label="Sensor ${escapeHtml(s.codigo)}, ${escapeHtml(s.estado.toLowerCase())}" style="width:36px;height:36px;border-radius:50%;border:2.5px solid #FFFFFF;background:${bg};color:#FFFFFF;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;box-shadow:0 1px 4px rgba(45,29,19,0.30)">${ICONS.sensor}</button><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;font-weight:700;background:#FFFFFF;border-radius:4px;padding:0 4px">${escapeHtml(s.codigo)}</span></div>`;
       }).join('');
 
     // Render Refugios
     layerRefugios.innerHTML = estado.refugios.map((r) => {
       const p = project(r.lat, r.lon);
-      return `<div style="position:absolute;left:${p.leftPct.toFixed(1)}%;top:${p.topPct.toFixed(1)}%;transform:translate(-50%,-18px);display:flex;flex-direction:column;align-items:center;gap:2px"><button type="button" data-map-refugio="${escapeHtml(r.id)}" aria-label="Refugio ${escapeHtml(r.nombre)}" style="width:36px;height:36px;border-radius:9px;border:2.5px solid #FFFFFF;background:#0F5F56;color:#FFFFFF;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;box-shadow:0 1px 4px rgba(16,27,54,0.35)">${ICONS.refugio}</button><span style="font-size:11px;font-weight:700;background:#FFFFFF;border-radius:4px;padding:0 4px;white-space:nowrap">${escapeHtml(r.nombre)}</span></div>`;
+      return `<div style="position:absolute;left:${p.leftPct.toFixed(1)}%;top:${p.topPct.toFixed(1)}%;transform:translate(-50%,-18px);display:flex;flex-direction:column;align-items:center;gap:2px"><button type="button" data-map-refugio="${escapeHtml(r.id)}" aria-label="Refugio ${escapeHtml(r.nombre)}" style="width:36px;height:36px;border-radius:9px;border:2.5px solid #FFFFFF;background:#0F5F56;color:#FFFFFF;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;box-shadow:0 1px 4px rgba(45,29,19,0.30)">${ICONS.refugio}</button><span style="font-size:11px;font-weight:700;background:#FFFFFF;border-radius:4px;padding:0 4px;white-space:nowrap">${escapeHtml(r.nombre)}</span></div>`;
     }).join('');
 
     // Render Alertas activas por zona
@@ -1386,7 +1386,7 @@
         const rPx = Math.max(18, Math.round((z.diametro * 0.082) / 2));
         const count = z.alertasActivasCount;
         const txt = `${count} ${count === 1 ? 'alerta' : 'alertas'}`;
-        return `<a href="Alertas.html?zona=${encodeURIComponent(z.id)}" aria-label="${txt} activas en ${escapeHtml(z.nombre)}" style="position:absolute;left:calc(${p.leftPct.toFixed(1)}% + ${Math.round(rPx * 0.45)}px);top:max(10px, calc(${p.topPct.toFixed(1)}% - ${Math.round(rPx * 0.85)}px));display:flex;align-items:center;gap:6px;height:32px;padding:0 10px;border-radius:999px;background:#8B1A1A;color:#FFFFFF;font-weight:800;font-size:13px;border:2px solid #FFFFFF;box-shadow:0 2px 6px rgba(16,27,54,0.4);white-space:nowrap">${ICONS.alerta}${txt}</a>`;
+        return `<a href="Alertas.html?zona=${encodeURIComponent(z.id)}" aria-label="${txt} activas en ${escapeHtml(z.nombre)}" style="position:absolute;left:calc(${p.leftPct.toFixed(1)}% + ${Math.round(rPx * 0.45)}px);top:max(10px, calc(${p.topPct.toFixed(1)}% - ${Math.round(rPx * 0.85)}px));display:flex;align-items:center;gap:6px;height:32px;padding:0 10px;border-radius:999px;background:#8B1A1A;color:#FFFFFF;font-weight:800;font-size:13px;border:2px solid #FFFFFF;box-shadow:0 2px 6px rgba(45,29,19,0.35);white-space:nowrap">${ICONS.alerta}${txt}</a>`;
       }).join('');
 
     // Layer checkbox sync
@@ -1401,7 +1401,7 @@
       popover = document.createElement('div');
       popover.dataset.mapPopover = 'true';
       popover.hidden = true;
-      popover.style.cssText = 'position:absolute;left:16px;top:116px;z-index:20;width:290px;max-width:calc(100% - 32px);background:#FFFFFF;border:1px solid #CDD2DA;border-radius:14px;padding:14px 16px;box-shadow:0 12px 28px rgba(16,27,54,0.22);display:flex;flex-direction:column;gap:8px';
+      popover.style.cssText = 'position:absolute;left:16px;top:116px;z-index:20;width:290px;max-width:calc(100% - 32px);background:#FFFFFF;border:1px solid #D6CCBE;border-radius:14px;padding:14px 16px;box-shadow:0 12px 28px rgba(45,29,19,0.22);display:flex;flex-direction:column;gap:8px';
       mapSection.appendChild(popover);
     }
 
@@ -1425,14 +1425,14 @@
         showPopover(`
           <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
             <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:800;font-size:15px">${escapeHtml(s.codigo)}</span>${badgeEstadoSensorHtml(s.estado)}</div>
-            <button type="button" data-close-popover aria-label="Cerrar detalle" style="border:none;background:#EEF0F4;width:28px;height:28px;border-radius:8px;cursor:pointer;font-weight:800;color:#14171F">×</button>
+            <button type="button" data-close-popover aria-label="Cerrar detalle" style="border:none;background:#EAE3D6;width:28px;height:28px;border-radius:8px;cursor:pointer;font-weight:800;color:#2B1D14">×</button>
           </div>
           <span style="font-weight:700">${escapeHtml(s.tipo)}</span>
-          <span style="color:#555B66;font-size:13px">${escapeHtml(zonasTxt)}</span>
-          <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;color:#555B66">Última: ${escapeHtml(medTxt)}</span>
+          <span style="color:#6F5E51;font-size:13px">${escapeHtml(zonasTxt)}</span>
+          <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;color:#6F5E51">Última: ${escapeHtml(medTxt)}</span>
           <div style="display:flex;gap:8px;margin-top:2px">
-            <a href="DlgMedicion.html?sensor=${encodeURIComponent(s.codigo)}" style="flex:1;display:inline-flex;align-items:center;justify-content:center;height:36px;border-radius:10px;background:#1D3A8A;color:#FFFFFF;font-size:13px;font-weight:700">Cargar medición</a>
-            <a href="Sensores.html" style="display:inline-flex;align-items:center;justify-content:center;height:36px;padding:0 12px;border-radius:10px;background:#EEF0F4;color:#14171F;font-size:13px;font-weight:700">Ver lista</a>
+            <a href="DlgMedicion.html?sensor=${encodeURIComponent(s.codigo)}" style="flex:1;display:inline-flex;align-items:center;justify-content:center;height:36px;border-radius:10px;background:#0284C7;color:#FFFFFF;font-size:13px;font-weight:700">Cargar medición</a>
+            <a href="Sensores.html" style="display:inline-flex;align-items:center;justify-content:center;height:36px;padding:0 12px;border-radius:10px;background:#EAE3D6;color:#2B1D14;font-size:13px;font-weight:700">Ver lista</a>
           </div>
         `);
       });
@@ -1446,11 +1446,11 @@
         showPopover(`
           <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
             <span style="font-weight:800;font-size:15px;color:#0F5F56">${escapeHtml(r.nombre)}</span>
-            <button type="button" data-close-popover aria-label="Cerrar detalle" style="border:none;background:#EEF0F4;width:28px;height:28px;border-radius:8px;cursor:pointer;font-weight:800;color:#14171F">×</button>
+            <button type="button" data-close-popover aria-label="Cerrar detalle" style="border:none;background:#EAE3D6;width:28px;height:28px;border-radius:8px;cursor:pointer;font-weight:800;color:#2B1D14">×</button>
           </div>
-          <span style="color:#3F4550;font-size:13px">${escapeHtml(r.descripcion)}</span>
-          <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;color:#555B66">${escapeHtml(formatCoords(r.lat, r.lon))}</span>
-          <a href="Refugios.html" style="display:inline-flex;align-items:center;justify-content:center;height:36px;border-radius:10px;background:#EEF0F4;color:#14171F;font-size:13px;font-weight:700">Administrar refugios</a>
+          <span style="color:#524337;font-size:13px">${escapeHtml(r.descripcion)}</span>
+          <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;color:#6F5E51">${escapeHtml(formatCoords(r.lat, r.lon))}</span>
+          <a href="Refugios.html" style="display:inline-flex;align-items:center;justify-content:center;height:36px;border-radius:10px;background:#EAE3D6;color:#2B1D14;font-size:13px;font-weight:700">Administrar refugios</a>
         `);
       });
     });
@@ -1545,22 +1545,22 @@
         const toShow = activas.slice(0, 4);
         if (toShow.length === 0) {
           const empty = document.createElement('div');
-          empty.style.cssText = 'padding:14px;border:1px solid #E2E5EA;border-radius:12px;background:#FAFBFC;color:#555B66;font-size:13px';
+          empty.style.cssText = 'padding:14px;border:1px solid #E5DDD0;border-radius:12px;background:#FAF7F2;color:#6F5E51;font-size:13px';
           empty.textContent = 'No hay alertas activas en este momento.';
           alertsSection.insertBefore(empty, viewAllLink);
         } else {
           toShow.forEach((a) => {
             const card = document.createElement('a');
             card.href = `DlgEstadoAlerta.html?codigo=${encodeURIComponent(a.codigo)}`;
-            card.style.cssText = 'display:flex;flex-direction:column;gap:8px;padding:14px;border:1px solid #E2E5EA;border-radius:12px;background:#FAFBFC;color:inherit';
+            card.style.cssText = 'display:flex;flex-direction:column;gap:8px;padding:14px;border:1px solid #E5DDD0;border-radius:12px;background:#FAF7F2;color:inherit';
             card.innerHTML = `
               <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
                 <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px;font-weight:700">${escapeHtml(a.codigo)}</span>${badgeNivelHtml(a.nivel)}</div>
                 ${badgeEstadoAlertaHtml(a.estado)}
               </div>
               <span style="font-weight:700">${escapeHtml(a.zonaNombre)}</span>
-              <span style="color:#555B66;font-size:13px">${escapeHtml(a.sensorCodigo)} · ${escapeHtml(a.detalleCorto)}</span>
-              <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;color:#555B66">${escapeHtml(a.fechaHora)}</span>
+              <span style="color:#6F5E51;font-size:13px">${escapeHtml(a.sensorCodigo)} · ${escapeHtml(a.detalleCorto)}</span>
+              <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;color:#6F5E51">${escapeHtml(a.fechaHora)}</span>
             `;
             alertsSection.insertBefore(card, viewAllLink);
           });
@@ -1637,7 +1637,7 @@
       clearTableRows(table.inner, table.headerRow);
       if (filtered.length === 0) {
         const empty = document.createElement('div');
-        empty.style.cssText = 'padding:24px 20px;border-top:1px solid #ECEEF2;color:#555B66;text-align:center';
+        empty.style.cssText = 'padding:24px 20px;border-top:1px solid #EAE2D5;color:#6F5E51;text-align:center';
         empty.textContent = 'No se encontraron zonas que coincidan con los filtros.';
         table.inner.appendChild(empty);
       } else {
@@ -1645,18 +1645,18 @@
           const row = document.createElement('div');
           row.setAttribute('data-row-selectable', 'true');
           row.dataset.rowId = z.id;
-          row.style.cssText = 'display:grid;grid-template-columns:minmax(190px,2fr) 95px minmax(150px,1.2fr) 78px 72px 64px 132px;gap:12px;align-items:center;min-height:64px;padding:4px 16px;border-top:1px solid #ECEEF2';
+          row.style.cssText = 'display:grid;grid-template-columns:minmax(190px,2fr) 95px minmax(150px,1.2fr) 78px 72px 64px 132px;gap:12px;align-items:center;min-height:64px;padding:4px 16px;border-top:1px solid #EAE2D5';
           row.innerHTML = `
-            <div style="min-width:0"><div style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:700">${escapeHtml(z.nombre)}</span><span style="color:#555B66;font-size:13px">${escapeHtml(z.descripcion)}</span></div></div>
+            <div style="min-width:0"><div style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:700">${escapeHtml(z.nombre)}</span><span style="color:#6F5E51;font-size:13px">${escapeHtml(z.descripcion)}</span></div></div>
             <div style="min-width:0">${badgeNivelHtml(z.nivelRiesgo)}</div>
             <div style="min-width:0"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px">${escapeHtml(formatCoords(z.lat, z.lon))}</span></div>
             <div style="min-width:0"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px">${escapeHtml(formatMeters(z.diametro))} m</span></div>
             <div style="min-width:0"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px">${escapeHtml(formatMeters(z.radio))} m</span></div>
             <div style="min-width:0"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px">${z.sensoresCount}</span></div>
             <div style="min-width:0"><div style="display:flex;gap:6px;justify-content:flex-end">
-              <a href="DlgAsociarSensores.html?id=${encodeURIComponent(z.id)}" aria-label="Asociar sensores a ${escapeHtml(z.nombre)}" title="Asociar sensores" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:#EEF0F4;color:#14171F;border:none;cursor:pointer;padding:0">${ICONS.link}</a>
-              <a href="DlgZona.html?id=${encodeURIComponent(z.id)}" aria-label="Modificar ${escapeHtml(z.nombre)}" title="Modificar zona" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:#EEF0F4;color:#14171F;border:none;cursor:pointer;padding:0">${ICONS.edit}</a>
-              <a href="DlgEliminarZona.html?id=${encodeURIComponent(z.id)}" aria-label="Eliminar ${escapeHtml(z.nombre)}" title="Eliminar zona" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:#EEF0F4;color:#8B1A1A;border:none;cursor:pointer;padding:0">${ICONS.trash}</a>
+              <a href="DlgAsociarSensores.html?id=${encodeURIComponent(z.id)}" aria-label="Asociar sensores a ${escapeHtml(z.nombre)}" title="Asociar sensores" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:#EAE3D6;color:#2B1D14;border:none;cursor:pointer;padding:0">${ICONS.link}</a>
+              <a href="DlgZona.html?id=${encodeURIComponent(z.id)}" aria-label="Modificar ${escapeHtml(z.nombre)}" title="Modificar zona" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:#EAE3D6;color:#2B1D14;border:none;cursor:pointer;padding:0">${ICONS.edit}</a>
+              <a href="DlgEliminarZona.html?id=${encodeURIComponent(z.id)}" aria-label="Eliminar ${escapeHtml(z.nombre)}" title="Eliminar zona" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:#EAE3D6;color:#8B1A1A;border:none;cursor:pointer;padding:0">${ICONS.trash}</a>
             </div></div>
           `;
           row.addEventListener('click', (e) => {
@@ -1814,10 +1814,10 @@
         const lbl = cb.closest('label');
         if (cb.checked) {
           count++;
-          lbl.style.border = '2px solid #1D3A8A';
-          lbl.style.background = '#F3F6FE';
+          lbl.style.border = '2px solid #0284C7';
+          lbl.style.background = '#EBF5FA';
         } else {
-          lbl.style.border = '1.5px solid #D5D9E0';
+          lbl.style.border = '1.5px solid #D4C9BA';
           lbl.style.background = '#FFFFFF';
         }
       });
@@ -1830,12 +1830,12 @@
       listContainer.innerHTML = sensores.map((s) => {
         const badge = s.dentroDeZona
           ? '<span style="display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:999px;border:1.5px solid transparent;background:#DCF2E3;color:#14532D;font-size:12px;font-weight:700;white-space:nowrap">Dentro de la zona</span>'
-          : '<span style="display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:999px;border:1.5px solid transparent;background:#E8EAEF;color:#3F4550;font-size:12px;font-weight:700;white-space:nowrap">Fuera de la zona</span>';
+          : '<span style="display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:999px;border:1.5px solid transparent;background:#EAE3D6;color:#524337;font-size:12px;font-weight:700;white-space:nowrap">Fuera de la zona</span>';
         return `
-          <label style="display:flex;align-items:center;gap:14px;min-height:60px;padding:0 16px;border-radius:14px;border:1.5px solid #D5D9E0;background:#FFFFFF;cursor:pointer;flex-shrink:0">
-            <input type="checkbox" value="${escapeHtml(s.codigo)}" ${s.asociado ? 'checked' : ''} style="width:20px;height:20px;margin:0;accent-color:#1D3A8A">
+          <label style="display:flex;align-items:center;gap:14px;min-height:60px;padding:0 16px;border-radius:14px;border:1.5px solid #D4C9BA;background:#FFFFFF;cursor:pointer;flex-shrink:0">
+            <input type="checkbox" value="${escapeHtml(s.codigo)}" ${s.asociado ? 'checked' : ''} style="width:20px;height:20px;margin:0;accent-color:#0284C7">
             <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:15px;font-weight:700">${escapeHtml(s.codigo)}</span>
-            <span style="flex:1 1 0;display:flex;flex-direction:column"><span style="font-weight:700">${escapeHtml(s.tipo)}</span><span style="color:#555B66;font-size:13px">a ${escapeHtml(formatMeters(s.distanciaMetros))} m del centro</span></span>
+            <span style="flex:1 1 0;display:flex;flex-direction:column"><span style="font-weight:700">${escapeHtml(s.tipo)}</span><span style="color:#6F5E51;font-size:13px">a ${escapeHtml(formatMeters(s.distanciaMetros))} m del centro</span></span>
             ${badge}
           </label>
         `;
@@ -1950,7 +1950,7 @@
       clearTableRows(table.inner, table.headerRow);
       if (filtered.length === 0) {
         const empty = document.createElement('div');
-        empty.style.cssText = 'padding:24px 20px;border-top:1px solid #ECEEF2;color:#555B66;text-align:center';
+        empty.style.cssText = 'padding:24px 20px;border-top:1px solid #EAE2D5;color:#6F5E51;text-align:center';
         empty.textContent = 'No se encontraron sensores que coincidan con los filtros.';
         table.inner.appendChild(empty);
       } else {
@@ -1958,13 +1958,13 @@
           const row = document.createElement('div');
           row.setAttribute('data-row-selectable', 'true');
           row.dataset.rowId = s.codigo;
-          row.style.cssText = 'display:grid;grid-template-columns:72px 105px minmax(150px,1.1fr) 128px minmax(150px,1.4fr) 110px 92px;gap:12px;align-items:center;min-height:64px;padding:4px 16px;border-top:1px solid #ECEEF2';
+          row.style.cssText = 'display:grid;grid-template-columns:72px 105px minmax(150px,1.1fr) 128px minmax(150px,1.4fr) 110px 92px;gap:12px;align-items:center;min-height:64px;padding:4px 16px;border-top:1px solid #EAE2D5';
           const zonasHtml = s.zonasNombres.length > 0
             ? escapeHtml(s.zonasNombres.join(', '))
-            : '<span style="color:#555B66;font-style:italic">Sin zona asociada</span>';
+            : '<span style="color:#6F5E51;font-style:italic">Sin zona asociada</span>';
           const medHtml = s.ultimaMedicion
-            ? `<div style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:700"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px;font-weight:700">${escapeHtml(formatValorUnidad(s.ultimaMedicion.valor, s.unidad))}</span></span><span style="color:#555B66;font-size:12px"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px">${escapeHtml(formatShortDateTime(s.ultimaMedicion.fechaHora))}</span></span></div>`
-            : '<span style="color:#555B66">Sin mediciones</span>';
+            ? `<div style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:700"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px;font-weight:700">${escapeHtml(formatValorUnidad(s.ultimaMedicion.valor, s.unidad))}</span></span><span style="color:#6F5E51;font-size:12px"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px">${escapeHtml(formatShortDateTime(s.ultimaMedicion.fechaHora))}</span></span></div>`
+            : '<span style="color:#6F5E51">Sin mediciones</span>';
           row.innerHTML = `
             <div style="min-width:0"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:14px;font-weight:700">${escapeHtml(s.codigo)}</span></div>
             <div style="min-width:0">${escapeHtml(s.tipo)}</div>
@@ -1973,8 +1973,8 @@
             <div style="min-width:0">${zonasHtml}</div>
             <div style="min-width:0">${medHtml}</div>
             <div style="min-width:0"><div style="display:flex;gap:6px;justify-content:flex-end">
-              <a href="DlgSensor.html?codigo=${encodeURIComponent(s.codigo)}" aria-label="Modificar ${escapeHtml(s.codigo)}" title="Modificar sensor" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:#EEF0F4;color:#14171F;border:none;cursor:pointer;padding:0">${ICONS.edit}</a>
-              <button type="button" data-delete-sensor="${escapeHtml(s.codigo)}" aria-label="Eliminar ${escapeHtml(s.codigo)}" title="Eliminar sensor" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:#EEF0F4;color:#8B1A1A;border:none;cursor:pointer;padding:0">${ICONS.trash}</button>
+              <a href="DlgSensor.html?codigo=${encodeURIComponent(s.codigo)}" aria-label="Modificar ${escapeHtml(s.codigo)}" title="Modificar sensor" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:#EAE3D6;color:#2B1D14;border:none;cursor:pointer;padding:0">${ICONS.edit}</a>
+              <button type="button" data-delete-sensor="${escapeHtml(s.codigo)}" aria-label="Eliminar ${escapeHtml(s.codigo)}" title="Eliminar sensor" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:#EAE3D6;color:#8B1A1A;border:none;cursor:pointer;padding:0">${ICONS.trash}</button>
             </div></div>
           `;
           row.addEventListener('click', (e) => {
@@ -2118,7 +2118,7 @@
               type: 'error',
               title: p.title || 'No se pudo registrar el sensor',
               codigo: p.codigo || payload.codigo,
-              detailHtml: `Ya existe un sensor con el código <strong style="font-family:'JetBrains Mono',ui-monospace,monospace;color:#14171F">${escapeHtml((p.codigo || payload.codigo).toUpperCase())}</strong>. Ingresá un código distinto para continuar.`,
+              detailHtml: `Ya existe un sensor con el código <strong style="font-family:'JetBrains Mono',ui-monospace,monospace;color:#2B1D14">${escapeHtml((p.codigo || payload.codigo).toUpperCase())}</strong>. Ingresá un código distinto para continuar.`,
               cancelHref: 'Sensores.html',
               cancelText: 'Cancelar',
               primaryHref: backUrl,
@@ -2212,7 +2212,7 @@
       clearTableRows(table.inner, table.headerRow);
       if (filtered.length === 0) {
         const empty = document.createElement('div');
-        empty.style.cssText = 'padding:24px 20px;border-top:1px solid #ECEEF2;color:#555B66;text-align:center';
+        empty.style.cssText = 'padding:24px 20px;border-top:1px solid #EAE2D5;color:#6F5E51;text-align:center';
         empty.textContent = 'No se encontraron umbrales para los filtros seleccionados.';
         table.inner.appendChild(empty);
       } else {
@@ -2220,13 +2220,13 @@
           const row = document.createElement('div');
           row.setAttribute('data-row-selectable', 'true');
           row.dataset.rowId = u.id;
-          row.style.cssText = 'display:grid;grid-template-columns:minmax(180px,1.8fr) minmax(110px,1fr) 105px 105px 100px 92px;gap:12px;align-items:center;min-height:64px;padding:4px 16px;border-top:1px solid #ECEEF2';
+          row.style.cssText = 'display:grid;grid-template-columns:minmax(180px,1.8fr) minmax(110px,1fr) 105px 105px 100px 92px;gap:12px;align-items:center;min-height:64px;padding:4px 16px;border-top:1px solid #EAE2D5';
           const minHtml = u.minimo !== null && u.minimo !== undefined
             ? `<span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px">${escapeHtml(formatValorUnidad(u.minimo, u.unidad))}</span>`
-            : '<span style="color:#555B66">Sin mínimo</span>';
+            : '<span style="color:#6F5E51">Sin mínimo</span>';
           const maxHtml = u.maximo !== null && u.maximo !== undefined
             ? `<span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:14px;font-weight:700">${escapeHtml(formatValorUnidad(u.maximo, u.unidad))}</span>`
-            : '<span style="color:#555B66">Sin máximo</span>';
+            : '<span style="color:#6F5E51">Sin máximo</span>';
           row.innerHTML = `
             <div style="min-width:0"><span style="font-weight:700">${escapeHtml(u.zonaNombre)}</span></div>
             <div style="min-width:0">${escapeHtml(u.tipo)}</div>
@@ -2234,8 +2234,8 @@
             <div style="min-width:0">${maxHtml}</div>
             <div style="min-width:0">${badgeNivelHtml(u.nivelAlerta)}</div>
             <div style="min-width:0"><div style="display:flex;gap:6px;justify-content:flex-end">
-              <a href="DlgUmbral.html?id=${encodeURIComponent(u.id)}" aria-label="Modificar umbral" title="Modificar umbral" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:#EEF0F4;color:#14171F;border:none;cursor:pointer;padding:0">${ICONS.edit}</a>
-              <button type="button" data-delete-umbral="${escapeHtml(u.id)}" aria-label="Eliminar umbral" title="Eliminar umbral" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:#EEF0F4;color:#8B1A1A;border:none;cursor:pointer;padding:0">${ICONS.trash}</button>
+              <a href="DlgUmbral.html?id=${encodeURIComponent(u.id)}" aria-label="Modificar umbral" title="Modificar umbral" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:#EAE3D6;color:#2B1D14;border:none;cursor:pointer;padding:0">${ICONS.edit}</a>
+              <button type="button" data-delete-umbral="${escapeHtml(u.id)}" aria-label="Eliminar umbral" title="Eliminar umbral" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:#EAE3D6;color:#8B1A1A;border:none;cursor:pointer;padding:0">${ICONS.trash}</button>
             </div></div>
           `;
           row.addEventListener('click', (e) => {
@@ -2515,7 +2515,7 @@
       clearTableRows(table.inner, table.headerRow);
       if (filtered.length === 0) {
         const empty = document.createElement('div');
-        empty.style.cssText = 'padding:24px 20px;border-top:1px solid #ECEEF2;color:#555B66;text-align:center';
+        empty.style.cssText = 'padding:24px 20px;border-top:1px solid #EAE2D5;color:#6F5E51;text-align:center';
         empty.textContent = 'No se encontraron mediciones para los filtros aplicados.';
         table.inner.appendChild(empty);
       } else {
@@ -2523,9 +2523,9 @@
           const row = document.createElement('div');
           row.setAttribute('data-row-selectable', 'true');
           row.dataset.rowId = m.id;
-          row.style.cssText = 'display:grid;grid-template-columns:145px 65px 105px minmax(150px,1.4fr) 88px 98px 155px;gap:12px;align-items:center;min-height:64px;padding:4px 16px;border-top:1px solid #ECEEF2';
+          row.style.cssText = 'display:grid;grid-template-columns:145px 65px 105px minmax(150px,1.4fr) 88px 98px 155px;gap:12px;align-items:center;min-height:64px;padding:4px 16px;border-top:1px solid #EAE2D5';
           const zonaHtml = m.zonaNombre === 'Sin zona asociada'
-            ? '<span style="color:#555B66;font-style:italic">Sin zona asociada</span>'
+            ? '<span style="color:#6F5E51;font-style:italic">Sin zona asociada</span>'
             : escapeHtml(m.zonaNombre);
           row.innerHTML = `
             <div style="min-width:0"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px">${escapeHtml(m.fechaHora)}</span></div>
@@ -2650,7 +2650,7 @@
             setMsgContext({
               type: 'informacion',
               title: 'Medición registrada y alerta generada',
-              detailHtml: `El valor <strong style="font-family:'JetBrains Mono',ui-monospace,monospace;color:#14171F">${escapeHtml(valStr)}</strong> de ${escapeHtml(m.sensorCodigo)} (${escapeHtml(a.condicion.toLowerCase())}). Se generó la alerta <strong>${escapeHtml(a.codigo)}</strong> en ${escapeHtml(a.zonaNombre)}.`,
+              detailHtml: `El valor <strong style="font-family:'JetBrains Mono',ui-monospace,monospace;color:#2B1D14">${escapeHtml(valStr)}</strong> de ${escapeHtml(m.sensorCodigo)} (${escapeHtml(a.condicion.toLowerCase())}). Se generó la alerta <strong>${escapeHtml(a.codigo)}</strong> en ${escapeHtml(a.zonaNombre)}.`,
               secondaryHref: 'Mediciones.html',
               secondaryText: 'Aceptar',
               primaryHref: `Alertas.html?codigo=${encodeURIComponent(a.codigo)}`,
@@ -2660,7 +2660,7 @@
             setMsgContext({
               type: 'informacion',
               title: 'Medición registrada dentro de umbral',
-              detailHtml: `El valor <strong style="font-family:'JetBrains Mono',ui-monospace,monospace;color:#14171F">${escapeHtml(valStr)}</strong> de ${escapeHtml(m.sensorCodigo)} quedó registrado como medición manual dentro de los límites configurados.`,
+              detailHtml: `El valor <strong style="font-family:'JetBrains Mono',ui-monospace,monospace;color:#2B1D14">${escapeHtml(valStr)}</strong> de ${escapeHtml(m.sensorCodigo)} quedó registrado como medición manual dentro de los límites configurados.`,
               secondaryHref: 'Mediciones.html',
               secondaryText: 'Aceptar',
               primaryHref: 'index.html',
@@ -2670,7 +2670,7 @@
             setMsgContext({
               type: 'informacion',
               title: 'Medición registrada',
-              detailHtml: `El valor <strong style="font-family:'JetBrains Mono',ui-monospace,monospace;color:#14171F">${escapeHtml(valStr)}</strong> de ${escapeHtml(m.sensorCodigo)} quedó registrado. No existen umbrales definidos para esta combinación de zona y tipo de sensor.`,
+              detailHtml: `El valor <strong style="font-family:'JetBrains Mono',ui-monospace,monospace;color:#2B1D14">${escapeHtml(valStr)}</strong> de ${escapeHtml(m.sensorCodigo)} quedó registrado. No existen umbrales definidos para esta combinación de zona y tipo de sensor.`,
               secondaryHref: 'Mediciones.html',
               secondaryText: 'Aceptar',
               primaryHref: 'Umbrales.html',
@@ -2740,7 +2740,7 @@
           setMsgContext({
             type: 'informacion',
             title: 'Simulación automática completada',
-            detailHtml: `Se generaron <strong>${nMed}</strong> mediciones para los sensores activos y se dispararon <strong>${nAlt}</strong> ${nAlt === 1 ? 'nueva alerta' : 'nuevas alertas'} (<strong style="font-family:'JetBrains Mono',ui-monospace,monospace;color:#14171F">${escapeHtml(codigos)}</strong>).`,
+            detailHtml: `Se generaron <strong>${nMed}</strong> mediciones para los sensores activos y se dispararon <strong>${nAlt}</strong> ${nAlt === 1 ? 'nueva alerta' : 'nuevas alertas'} (<strong style="font-family:'JetBrains Mono',ui-monospace,monospace;color:#2B1D14">${escapeHtml(codigos)}</strong>).`,
             secondaryHref: 'Mediciones.html',
             secondaryText: 'Aceptar',
             primaryHref: 'Alertas.html',
@@ -2861,7 +2861,7 @@
       clearTableRows(table.inner, table.headerRow);
       if (filtered.length === 0) {
         const empty = document.createElement('div');
-        empty.style.cssText = 'padding:24px 20px;border-top:1px solid #ECEEF2;color:#555B66;text-align:center';
+        empty.style.cssText = 'padding:24px 20px;border-top:1px solid #EAE2D5;color:#6F5E51;text-align:center';
         empty.textContent = 'No hay alertas que coincidan con los filtros aplicados.';
         table.inner.appendChild(empty);
       } else {
@@ -2869,15 +2869,15 @@
           const row = document.createElement('div');
           row.setAttribute('data-row-selectable', 'true');
           row.dataset.rowId = a.codigo;
-          row.style.cssText = 'display:grid;grid-template-columns:135px 72px minmax(190px,2fr) 64px 88px 108px 142px;gap:12px;align-items:center;min-height:64px;padding:4px 16px;border-top:1px solid #ECEEF2';
+          row.style.cssText = 'display:grid;grid-template-columns:135px 72px minmax(190px,2fr) 64px 88px 108px 142px;gap:12px;align-items:center;min-height:64px;padding:4px 16px;border-top:1px solid #EAE2D5';
           row.innerHTML = `
-            <div style="min-width:0"><div style="display:flex;flex-direction:column;gap:2px"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:14px;font-weight:700">${escapeHtml(a.codigo)}</span><span style="color:#555B66;font-size:11px;font-family:'JetBrains Mono',ui-monospace,monospace">${escapeHtml(a.fechaHora)}</span></div></div>
+            <div style="min-width:0"><div style="display:flex;flex-direction:column;gap:2px"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:14px;font-weight:700">${escapeHtml(a.codigo)}</span><span style="color:#6F5E51;font-size:11px;font-family:'JetBrains Mono',ui-monospace,monospace">${escapeHtml(a.fechaHora)}</span></div></div>
             <div style="min-width:0">${badgeNivelHtml(a.nivel)}</div>
-            <div style="min-width:0"><div style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:700">${escapeHtml(a.zonaNombre)}</span><span style="color:#555B66;font-size:12px">${escapeHtml(a.condicion)}</span></div></div>
+            <div style="min-width:0"><div style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:700">${escapeHtml(a.zonaNombre)}</span><span style="color:#6F5E51;font-size:12px">${escapeHtml(a.condicion)}</span></div></div>
             <div style="min-width:0"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px;font-weight:700">${escapeHtml(a.sensorCodigo)}</span></div>
             <div style="min-width:0"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px;font-weight:700">${escapeHtml(formatValorUnidad(a.valor, a.unidad))}</span></div>
             <div style="min-width:0">${badgeEstadoAlertaHtml(a.estado)}</div>
-            <div style="min-width:0"><div style="display:flex;gap:6px;justify-content:flex-end"><a href="DlgEstadoAlerta.html?codigo=${encodeURIComponent(a.codigo)}" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;height:40px;padding:0 12px;border-radius:10px;font-weight:700;font-size:13px;white-space:nowrap;background:#E8EAEF;color:#14171F">Actualizar estado</a></div></div>
+            <div style="min-width:0"><div style="display:flex;gap:6px;justify-content:flex-end"><a href="DlgEstadoAlerta.html?codigo=${encodeURIComponent(a.codigo)}" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;height:40px;padding:0 12px;border-radius:10px;font-weight:700;font-size:13px;white-space:nowrap;background:#EAE3D6;color:#2B1D14">Actualizar estado</a></div></div>
           `;
           row.addEventListener('click', (e) => {
             if (e.target.closest('a, button')) return;
@@ -2928,7 +2928,7 @@
           ${badgeEstadoAlertaHtml(a.estado)}
         </div>
         <span style="font-weight:700">${escapeHtml(a.zonaNombre)}</span>
-        <span style="color:#3F4550;font-size:14px">${escapeHtml(a.sensorCodigo)} · ${escapeHtml(a.detalleCorto)} · ${escapeHtml(a.fechaHora)}</span>
+        <span style="color:#524337;font-size:14px">${escapeHtml(a.sensorCodigo)} · ${escapeHtml(a.detalleCorto)} · ${escapeHtml(a.fechaHora)}</span>
       `;
     }
 
@@ -2942,8 +2942,8 @@
     // If current alert isn't 'Activa', add 'Activa' option too so operator can reopen if desired
     if (a.estado !== 'Activa' && !radios.some((r) => r.value === 'Activa')) {
       const lbl = document.createElement('label');
-      lbl.style.cssText = 'display:flex;align-items:center;gap:14px;min-height:56px;padding:0 16px;border-radius:14px;border:1.5px solid #D5D9E0;background:#FFFFFF;cursor:pointer';
-      lbl.innerHTML = '<input type="radio" name="estado" value="Activa" style="width:20px;height:20px;margin:0;accent-color:#1D3A8A"><span style="display:flex;flex-direction:column"><span style="font-weight:700">Activa</span><span style="color:#555B66;font-size:13px">Reabrir la alerta para seguimiento inmediato</span></span>';
+      lbl.style.cssText = 'display:flex;align-items:center;gap:14px;min-height:56px;padding:0 16px;border-radius:14px;border:1.5px solid #D4C9BA;background:#FFFFFF;cursor:pointer';
+      lbl.innerHTML = '<input type="radio" name="estado" value="Activa" style="width:20px;height:20px;margin:0;accent-color:#0284C7"><span style="display:flex;flex-direction:column"><span style="font-weight:700">Activa</span><span style="color:#6F5E51;font-size:13px">Reabrir la alerta para seguimiento inmediato</span></span>';
       fieldset.insertBefore(lbl, fieldset.querySelector('label'));
       radios.unshift(lbl.querySelector('input'));
     }
@@ -2953,10 +2953,10 @@
       radios.forEach((r) => {
         const lbl = r.closest('label');
         if (r.checked) {
-          lbl.style.border = '2px solid #1D3A8A';
-          lbl.style.background = '#F3F6FE';
+          lbl.style.border = '2px solid #0284C7';
+          lbl.style.background = '#EBF5FA';
         } else {
-          lbl.style.border = '1.5px solid #D5D9E0';
+          lbl.style.border = '1.5px solid #D4C9BA';
           lbl.style.background = '#FFFFFF';
         }
       });
@@ -3024,22 +3024,22 @@
       const isEdit = Boolean(refugio);
       const overlay = document.createElement('div');
       overlay.id = 'sigri-dynamic-modal';
-      overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;padding:24px;box-sizing:border-box;background:rgba(20,27,45,0.72);display:flex;align-items:center;justify-content:center;font-family:"Manrope",system-ui,sans-serif;color:#14171F;font-size:15px;line-height:1.4';
+      overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;padding:24px;box-sizing:border-box;background:rgba(42,27,18,0.72);display:flex;align-items:center;justify-content:center;font-family:"Manrope",system-ui,sans-serif;color:#2B1D14;font-size:15px;line-height:1.4';
       overlay.innerHTML = `
-        <div role="dialog" aria-modal="true" style="width:640px;max-width:100%;box-sizing:border-box;background:#FFFFFF;border-radius:28px;border-top:8px solid #1D3A8A;padding:32px 36px 36px;display:flex;flex-direction:column;gap:18px;box-shadow:0 24px 60px rgba(8,14,32,0.45)">
+        <div role="dialog" aria-modal="true" style="width:640px;max-width:100%;box-sizing:border-box;background:#FFFFFF;border-radius:28px;border-top:8px solid #0284C7;padding:32px 36px 36px;display:flex;flex-direction:column;gap:18px;box-shadow:0 24px 60px rgba(45,29,19,0.35)">
           <div style="display:flex;flex-direction:column;gap:2px">
             <h2 style="margin:0;font-size:26px;font-weight:800;letter-spacing:-0.01em">${isEdit ? 'Modificar refugio' : 'Registrar refugio'}</h2>
-            <span style="color:#555B66">Punto de resguardo informativo que se muestra en el mapa</span>
+            <span style="color:#6F5E51">Punto de resguardo informativo que se muestra en el mapa</span>
           </div>
-          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:#555B66">Nombre<input type="text" data-field="nombre" value="${escapeHtml(refugio?.nombre || '')}" placeholder="Ej. Escuela Primaria N° 18" style="height:52px;width:100%;box-sizing:border-box;padding:0 16px;border-radius:14px;border:1.5px solid #C9CED8;background:#FFFFFF;font-family:'Manrope',system-ui,sans-serif;font-size:17px;color:#14171F"></label>
-          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:#555B66">Descripción<input type="text" data-field="descripcion" value="${escapeHtml(refugio?.descripcion || '')}" placeholder="Características y accesibilidad" style="height:52px;width:100%;box-sizing:border-box;padding:0 16px;border-radius:14px;border:1.5px solid #C9CED8;background:#FFFFFF;font-family:'Manrope',system-ui,sans-serif;font-size:17px;color:#14171F"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:#6F5E51">Nombre<input type="text" data-field="nombre" value="${escapeHtml(refugio?.nombre || '')}" placeholder="Ej. Escuela Primaria N° 18" style="height:52px;width:100%;box-sizing:border-box;padding:0 16px;border-radius:14px;border:1.5px solid #D4C9BA;background:#FFFFFF;font-family:'Manrope',system-ui,sans-serif;font-size:17px;color:#2B1D14"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:#6F5E51">Descripción<input type="text" data-field="descripcion" value="${escapeHtml(refugio?.descripcion || '')}" placeholder="Características y accesibilidad" style="height:52px;width:100%;box-sizing:border-box;padding:0 16px;border-radius:14px;border:1.5px solid #D4C9BA;background:#FFFFFF;font-family:'Manrope',system-ui,sans-serif;font-size:17px;color:#2B1D14"></label>
           <div style="display:flex;gap:14px">
-            <label style="flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:#555B66">Latitud<input type="text" data-field="lat" value="${escapeHtml(refugio ? refugio.lat.toFixed(6) : '-34.922000')}" style="height:52px;width:100%;box-sizing:border-box;padding:0 16px;border-radius:14px;border:1.5px solid #C9CED8;background:#FFFFFF;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:17px;color:#14171F"></label>
-            <label style="flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:#555B66">Longitud<input type="text" data-field="lon" value="${escapeHtml(refugio ? refugio.lon.toFixed(6) : '-57.955000')}" style="height:52px;width:100%;box-sizing:border-box;padding:0 16px;border-radius:14px;border:1.5px solid #C9CED8;background:#FFFFFF;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:17px;color:#14171F"></label>
+            <label style="flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:#6F5E51">Latitud<input type="text" data-field="lat" value="${escapeHtml(refugio ? refugio.lat.toFixed(6) : '-34.922000')}" style="height:52px;width:100%;box-sizing:border-box;padding:0 16px;border-radius:14px;border:1.5px solid #D4C9BA;background:#FFFFFF;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:17px;color:#2B1D14"></label>
+            <label style="flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:#6F5E51">Longitud<input type="text" data-field="lon" value="${escapeHtml(refugio ? refugio.lon.toFixed(6) : '-57.955000')}" style="height:52px;width:100%;box-sizing:border-box;padding:0 16px;border-radius:14px;border:1.5px solid #D4C9BA;background:#FFFFFF;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:17px;color:#2B1D14"></label>
           </div>
           <div style="display:flex;gap:14px;margin-top:6px">
-            <button type="button" data-action="cancel" style="flex:1 1 0;height:60px;border:none;border-radius:16px;font-family:'Manrope',system-ui,sans-serif;font-size:17px;font-weight:800;background:#E8EAEF;color:#14171F;cursor:pointer">Cancelar</button>
-            <button type="button" data-action="save" style="flex:1 1 0;height:60px;border:none;border-radius:16px;font-family:'Manrope',system-ui,sans-serif;font-size:17px;font-weight:800;background:#1D3A8A;color:#FFFFFF;cursor:pointer">${isEdit ? 'Guardar cambios' : 'Registrar refugio'}</button>
+            <button type="button" data-action="cancel" style="flex:1 1 0;height:60px;border:none;border-radius:16px;font-family:'Manrope',system-ui,sans-serif;font-size:17px;font-weight:800;background:#EAE3D6;color:#2B1D14;cursor:pointer">Cancelar</button>
+            <button type="button" data-action="save" style="flex:1 1 0;height:60px;border:none;border-radius:16px;font-family:'Manrope',system-ui,sans-serif;font-size:17px;font-weight:800;background:#0284C7;color:#FFFFFF;cursor:pointer">${isEdit ? 'Guardar cambios' : 'Registrar refugio'}</button>
           </div>
         </div>
       `;
@@ -3086,7 +3086,7 @@
       clearTableRows(table.inner, table.headerRow);
       if (filtered.length === 0) {
         const empty = document.createElement('div');
-        empty.style.cssText = 'padding:24px 20px;border-top:1px solid #ECEEF2;color:#555B66;text-align:center';
+        empty.style.cssText = 'padding:24px 20px;border-top:1px solid #EAE2D5;color:#6F5E51;text-align:center';
         empty.textContent = 'No se encontraron refugios que coincidan con la búsqueda.';
         table.inner.appendChild(empty);
       } else {
@@ -3094,14 +3094,14 @@
           const row = document.createElement('div');
           row.setAttribute('data-row-selectable', 'true');
           row.dataset.rowId = r.id;
-          row.style.cssText = 'display:grid;grid-template-columns:minmax(160px,1.3fr) minmax(190px,1.8fr) minmax(150px,1fr) 92px;gap:12px;align-items:center;min-height:64px;padding:4px 16px;border-top:1px solid #ECEEF2';
+          row.style.cssText = 'display:grid;grid-template-columns:minmax(160px,1.3fr) minmax(190px,1.8fr) minmax(150px,1fr) 92px;gap:12px;align-items:center;min-height:64px;padding:4px 16px;border-top:1px solid #EAE2D5';
           row.innerHTML = `
             <div style="min-width:0"><span style="font-weight:700">${escapeHtml(r.nombre)}</span></div>
-            <div style="min-width:0"><span style="color:#555B66">${escapeHtml(r.descripcion)}</span></div>
+            <div style="min-width:0"><span style="color:#6F5E51">${escapeHtml(r.descripcion)}</span></div>
             <div style="min-width:0"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px">${escapeHtml(formatCoords(r.lat, r.lon))}</span></div>
             <div style="min-width:0"><div style="display:flex;gap:6px;justify-content:flex-end">
-              <button type="button" data-edit-refugio="${escapeHtml(r.id)}" aria-label="Modificar ${escapeHtml(r.nombre)}" title="Modificar refugio" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:#EEF0F4;color:#14171F;border:none;cursor:pointer;padding:0">${ICONS.edit}</button>
-              <button type="button" data-delete-refugio="${escapeHtml(r.id)}" aria-label="Eliminar ${escapeHtml(r.nombre)}" title="Eliminar refugio" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:#EEF0F4;color:#8B1A1A;border:none;cursor:pointer;padding:0">${ICONS.trash}</button>
+              <button type="button" data-edit-refugio="${escapeHtml(r.id)}" aria-label="Modificar ${escapeHtml(r.nombre)}" title="Modificar refugio" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:#EAE3D6;color:#2B1D14;border:none;cursor:pointer;padding:0">${ICONS.edit}</button>
+              <button type="button" data-delete-refugio="${escapeHtml(r.id)}" aria-label="Eliminar ${escapeHtml(r.nombre)}" title="Eliminar refugio" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:#EAE3D6;color:#8B1A1A;border:none;cursor:pointer;padding:0">${ICONS.trash}</button>
             </div></div>
           `;
           row.addEventListener('click', (e) => {
@@ -3178,12 +3178,12 @@
     if (actionsDiv) {
       const btns = [];
       if (ctx.secondaryHref && ctx.secondaryText) {
-        btns.push(`<a href="${escapeHtml(ctx.secondaryHref)}" style="flex:1 1 0;display:flex;align-items:center;justify-content:center;height:60px;border-radius:16px;font-size:17px;font-weight:800;background:#E8EAEF;color:#14171F">${escapeHtml(ctx.secondaryText)}</a>`);
+        btns.push(`<a href="${escapeHtml(ctx.secondaryHref)}" style="flex:1 1 0;display:flex;align-items:center;justify-content:center;height:60px;border-radius:16px;font-size:17px;font-weight:800;background:#EAE3D6;color:#2B1D14">${escapeHtml(ctx.secondaryText)}</a>`);
       } else if (ctx.cancelHref && ctx.cancelText) {
-        btns.push(`<a href="${escapeHtml(ctx.cancelHref)}" style="flex:1 1 0;display:flex;align-items:center;justify-content:center;height:60px;border-radius:16px;font-size:17px;font-weight:800;background:#E8EAEF;color:#14171F">${escapeHtml(ctx.cancelText)}</a>`);
+        btns.push(`<a href="${escapeHtml(ctx.cancelHref)}" style="flex:1 1 0;display:flex;align-items:center;justify-content:center;height:60px;border-radius:16px;font-size:17px;font-weight:800;background:#EAE3D6;color:#2B1D14">${escapeHtml(ctx.cancelText)}</a>`);
       }
       if (ctx.primaryHref && ctx.primaryText) {
-        btns.push(`<a href="${escapeHtml(ctx.primaryHref)}" style="flex:1 1 0;display:flex;align-items:center;justify-content:center;height:60px;border-radius:16px;font-size:17px;font-weight:800;background:#1D3A8A;color:#FFFFFF">${escapeHtml(ctx.primaryText)}</a>`);
+        btns.push(`<a href="${escapeHtml(ctx.primaryHref)}" style="flex:1 1 0;display:flex;align-items:center;justify-content:center;height:60px;border-radius:16px;font-size:17px;font-weight:800;background:#0284C7;color:#FFFFFF">${escapeHtml(ctx.primaryText)}</a>`);
       }
       if (btns.length > 0) {
         actionsDiv.innerHTML = btns.join('');
