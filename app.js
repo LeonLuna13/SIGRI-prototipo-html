@@ -784,6 +784,538 @@
     }
   }
 
+  function ensureMiniMapStyles() {
+    if (document.getElementById('sigri-minimap-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'sigri-minimap-styles';
+    style.textContent = `
+      @keyframes sigriPulse {
+        0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.95; }
+        75% { transform: translate(-50%, -50%) scale(1.75); opacity: 0; }
+        100% { transform: translate(-50%, -50%) scale(1.75); opacity: 0; }
+      }
+      .sigri-pulse-ring {
+        animation: sigriPulse 1.6s ease-out infinite;
+        pointer-events: none;
+      }
+      [data-row-selectable] {
+        cursor: pointer;
+        transition: background-color 0.14s ease;
+      }
+      [data-row-selectable]:hover {
+        background-color: #F7F9FD;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  function setupSplitLayoutWithMiniMap(initialEstado, options) {
+    ensureMiniMapStyles();
+    const opts = options || {};
+    const main = document.querySelector('main');
+    const header = main ? main.querySelector('header') : null;
+    if (!main || !header) return null;
+
+    let splitWrap = main.querySelector('[data-split-container]');
+    let middleCol = main.querySelector('[data-list-column]');
+    let aside = main.querySelector('aside[data-mini-map]');
+
+    if (!splitWrap) {
+      splitWrap = document.createElement('div');
+      splitWrap.dataset.splitContainer = 'true';
+      splitWrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start';
+
+      middleCol = document.createElement('div');
+      middleCol.dataset.listColumn = 'true';
+      middleCol.style.cssText = 'flex:999 1 560px;min-width:0;display:flex;flex-direction:column;gap:20px';
+
+      const childrenToMove = Array.from(main.children).filter((el) => el !== header);
+      childrenToMove.forEach((el) => middleCol.appendChild(el));
+
+      aside = document.createElement('aside');
+      aside.dataset.miniMap = 'true';
+      aside.setAttribute('aria-label', 'Mapa de ubicación');
+      aside.style.cssText = 'flex:1 0 360px;max-width:440px;min-width:310px;position:sticky;top:24px;display:flex;flex-direction:column;gap:14px';
+
+      aside.innerHTML = `
+        <section style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+            <div style="display:flex;flex-direction:column;gap:2px">
+              <h2 style="margin:0;font-size:16px;font-weight:800">Mapa de ubicación</h2>
+              <span style="color:#555B66;font-size:12px">${escapeHtml(opts.subtitle || 'Seleccioná un elemento de la lista para ubicarlo')}</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <button type="button" data-minimap-reset style="height:32px;padding:0 10px;border:none;border-radius:8px;background:#EEF0F4;color:#14171F;font-family:'Manrope',system-ui,sans-serif;font-size:12px;font-weight:700;cursor:pointer">Ver todo</button>
+              <a href="index.html" title="Abrir mapa completo" style="display:inline-flex;align-items:center;justify-content:center;height:32px;padding:0 10px;border-radius:8px;background:#FFFFFF;color:#1D3A8A;box-shadow:inset 0 0 0 1.5px #1D3A8A;font-size:12px;font-weight:700;white-space:nowrap">Ampliar</a>
+            </div>
+          </div>
+          <div data-minimap-box style="position:relative;height:360px;border-radius:12px;border:1px solid #CDD2DA;overflow:hidden;background:#EDEFE8">
+            <div data-minimap-viewport style="position:absolute;inset:0;transform-origin:center center;transition:transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);cursor:grab">
+              <svg aria-hidden="true" width="100%" height="100%" viewBox="0 0 820 640" preserveAspectRatio="none" style="position:absolute;inset:0;display:block">
+                <defs>
+                  <pattern id="sigri-mini-calles" width="26" height="26" patternUnits="userSpaceOnUse" patternTransform="rotate(45 410 320)">
+                    <rect width="26" height="26" fill="#EDEFE8"/>
+                    <path d="M0 0h26M0 0v26" stroke="#FFFFFF" stroke-width="3"/>
+                  </pattern>
+                </defs>
+                <rect width="820" height="640" fill="url(#sigri-mini-calles)"/>
+                <path d="M560 0h260v150c-70-20-160-70-260-150z" fill="#BFD9EE"/>
+                <path d="M300 430l60-60 60 60-60 60z" fill="#CFE3C4"/>
+                <path d="M470 150l70-70 70 70-70 70z" fill="#CFE3C4"/>
+                <path d="M0 320h820M410 0v640" stroke="#FFFFFF" stroke-width="7"/>
+                <path d="M90 640 730 0M90 0l640 640" stroke="#FBF3D6" stroke-width="6"/>
+                <path d="M0 40c60 10 110 30 160 60s90 40 150 30 120-60 180-80 100-40 130-50" fill="none" stroke="#8DBDE0" stroke-width="5"/>
+                <path d="M820 400c-50 20-90 50-140 80s-90 60-120 160" fill="none" stroke="#8DBDE0" stroke-width="5"/>
+                <path d="M0 560c50-30 90-50 130-55s90 20 130 60 50 60 60 75" fill="none" stroke="#8DBDE0" stroke-width="4"/>
+              </svg>
+              <div data-layer="zonas"></div>
+              <div data-layer="refugios"></div>
+              <div data-layer="sensores"></div>
+              <div data-layer="seleccion" style="pointer-events:none"></div>
+              <div data-layer="alertas"></div>
+            </div>
+            <div style="position:absolute;left:10px;top:10px;z-index:10;display:flex;flex-direction:column;background:#FFFFFF;border:1px solid #CDD2DA;border-radius:10px;overflow:hidden;box-shadow:0 2px 6px rgba(16,27,54,0.16)">
+              <button type="button" data-minimap-zoom-in aria-label="Acercar" style="width:34px;height:34px;border:none;background:#FFFFFF;color:#14171F;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;font-weight:800;font-size:16px">+</button>
+              <button type="button" data-minimap-zoom-out aria-label="Alejar" style="width:34px;height:34px;border:none;border-top:1px solid #E2E5EA;background:#FFFFFF;color:#14171F;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;font-weight:800;font-size:16px">−</button>
+            </div>
+            <div style="position:absolute;left:10px;bottom:10px;z-index:10;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.94);border:1px solid #CDD2DA;border-radius:8px;padding:4px 8px">
+              <span data-minimap-coords style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;color:#14171F">Lat -34.915000 · Lon -57.948000</span>
+            </div>
+            <span data-minimap-scale style="position:absolute;right:10px;bottom:10px;z-index:10;background:rgba(255,255,255,0.92);border:1px solid #CDD2DA;border-radius:6px;padding:2px 7px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;color:#14171F">1 km</span>
+          </div>
+          <div data-minimap-detail style="background:#FAFBFC;border:1px solid #E2E5EA;border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:6px">
+            <span style="color:#555B66;font-size:13px">Hacé clic en una fila de la lista para marcarla y acercar el mapa.</span>
+          </div>
+        </section>
+      `;
+
+      splitWrap.appendChild(middleCol);
+      splitWrap.appendChild(aside);
+      main.appendChild(splitWrap);
+    }
+
+    let currentState = initialEstado;
+    let selectedTarget = null;
+    let zoom = 1;
+    let panX = 0;
+    let panY = 0;
+
+    const mapBox = aside.querySelector('[data-minimap-box]');
+    const viewport = aside.querySelector('[data-minimap-viewport]');
+    const layerZonas = viewport.querySelector('[data-layer="zonas"]');
+    const layerRefugios = viewport.querySelector('[data-layer="refugios"]');
+    const layerSensores = viewport.querySelector('[data-layer="sensores"]');
+    const layerSeleccion = viewport.querySelector('[data-layer="seleccion"]');
+    const layerAlertas = viewport.querySelector('[data-layer="alertas"]');
+    const coordsEl = aside.querySelector('[data-minimap-coords]');
+    const scaleEl = aside.querySelector('[data-minimap-scale]');
+    const detailEl = aside.querySelector('[data-minimap-detail]');
+
+    const project = (lat, lon) => ({
+      leftPct: ((lon - (-58.000)) / 0.110) * 100,
+      topPct: ((-34.888 - lat) / 0.070) * 100
+    });
+
+    const clampPan = (px, py, z) => {
+      const W = mapBox.clientWidth || 380;
+      const H = mapBox.clientHeight || 360;
+      const maxX = Math.max(0, ((z - 1) * W) / 2);
+      const maxY = Math.max(0, ((z - 1) * H) / 2);
+      return {
+        x: Math.max(-maxX, Math.min(maxX, px)),
+        y: Math.max(-maxY, Math.min(maxY, py))
+      };
+    };
+
+    const applyTransform = (animate) => {
+      viewport.style.transition = animate
+        ? 'transform 0.32s cubic-bezier(0.22, 1, 0.36, 1)'
+        : 'none';
+      const clamped = clampPan(panX, panY, zoom);
+      panX = clamped.x;
+      panY = clamped.y;
+      viewport.style.transform = `translate(${panX}px, ${panY}px) scale(${zoom})`;
+      if (scaleEl) {
+        const km = 1 / zoom;
+        scaleEl.textContent = km >= 1
+          ? `${km.toFixed(km % 1 === 0 ? 0 : 1).replace('.', ',')} km`
+          : `${Math.round(km * 1000)} m`;
+      }
+    };
+
+    const focusCoords = (lat, lon, targetZoom) => {
+      const p = project(lat, lon);
+      const W = mapBox.clientWidth || 380;
+      const H = mapBox.clientHeight || 360;
+      zoom = targetZoom || 1.65;
+      panX = zoom * (0.5 - p.leftPct / 100) * W;
+      panY = zoom * (0.5 - p.topPct / 100) * H;
+      applyTransform(true);
+      if (coordsEl) {
+        coordsEl.textContent = `Lat ${Number(lat).toFixed(6)} · Lon ${Number(lon).toFixed(6)}`;
+      }
+    };
+
+    const resolveSelection = (target) => {
+      if (!target) {
+        return {
+          focusLat: null,
+          focusLon: null,
+          focusZoom: 1,
+          highlightZonaIds: new Set(),
+          highlightSensores: new Set(),
+          highlightRefugios: new Set(),
+          pulseColor: '#1D3A8A',
+          pulsePoints: [],
+          detailHtml: '<span style="color:#555B66;font-size:13px">Vista general de La Plata. Hacé clic en una fila de la tabla para ubicarla en el mapa.</span>'
+        };
+      }
+
+      const highlightZonaIds = new Set();
+      const highlightSensores = new Set();
+      const highlightRefugios = new Set();
+      const pulsePoints = [];
+      let pulseColor = '#1D3A8A';
+      let focusLat = null;
+      let focusLon = null;
+      let focusZoom = 1.65;
+      let detailHtml = '';
+
+      if (target.type === 'zona') {
+        const z = currentState.zonas.find((x) => x.id === target.id);
+        if (z) {
+          highlightZonaIds.add(z.id);
+          currentState.sensores.filter((s) => s.zonasIds.includes(z.id)).forEach((s) => highlightSensores.add(s.codigo));
+          focusLat = z.lat;
+          focusLon = z.lon;
+          focusZoom = z.diametro >= 2000 ? 1.45 : 1.65;
+          pulseColor = z.nivelRiesgo === 'Alto' ? '#8B1A1A' : z.nivelRiesgo === 'Medio' ? '#B45309' : '#0E7490';
+          pulsePoints.push({ lat: z.lat, lon: z.lon, size: Math.max(36, Math.round(z.diametro * 0.045) + 18) });
+          detailHtml = `
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+              <span style="font-weight:800;font-size:14px">${escapeHtml(z.nombre)}</span>
+              ${badgeNivelHtml(z.nivelRiesgo)}
+            </div>
+            <span style="color:#555B66;font-size:12px">${escapeHtml(z.descripcion || 'Sin descripción')}</span>
+            <div style="display:flex;justify-content:space-between;gap:8px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;color:#3F4550">
+              <span>Radio ${escapeHtml(formatMeters(z.radio))} m</span>
+              <span>${z.sensoresCount} ${z.sensoresCount === 1 ? 'sensor' : 'sensores'}</span>
+            </div>
+          `;
+        }
+      } else if (target.type === 'sensor') {
+        const s = currentState.sensores.find((x) => x.codigo === target.codigo);
+        if (s) {
+          highlightSensores.add(s.codigo);
+          s.zonasIds.forEach((zid) => highlightZonaIds.add(zid));
+          focusLat = s.lat;
+          focusLon = s.lon;
+          focusZoom = 1.75;
+          pulseColor = s.estado === 'Activo' ? '#1D3A8A' : s.estado === 'Desconectado' ? '#8B1A1A' : '#5B6170';
+          pulsePoints.push({ lat: s.lat, lon: s.lon, size: 42 });
+          const zonasTxt = s.zonasNombres.length ? s.zonasNombres.join(', ') : 'Sin zona asociada';
+          const medTxt = s.ultimaMedicion
+            ? `${formatValorUnidad(s.ultimaMedicion.valor, s.unidad)} (${formatShortDateTime(s.ultimaMedicion.fechaHora)})`
+            : 'Sin mediciones';
+          detailHtml = `
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:800;font-size:14px">${escapeHtml(s.codigo)}</span>
+                <span style="font-weight:700;font-size:13px">${escapeHtml(s.tipo)}</span>
+              </div>
+              ${badgeEstadoSensorHtml(s.estado)}
+            </div>
+            <span style="color:#555B66;font-size:12px">${escapeHtml(zonasTxt)}</span>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+              <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;color:#3F4550">Última: ${escapeHtml(medTxt)}</span>
+              <a href="DlgMedicion.html?sensor=${encodeURIComponent(s.codigo)}" style="font-size:12px;font-weight:700;color:#1D3A8A">Cargar medición →</a>
+            </div>
+          `;
+        }
+      } else if (target.type === 'medicion') {
+        const m = currentState.mediciones.find((x) => x.id === target.id);
+        if (m) {
+          const s = currentState.sensores.find((x) => x.codigo === m.sensorCodigo);
+          if (s) {
+            highlightSensores.add(s.codigo);
+            s.zonasIds.forEach((zid) => highlightZonaIds.add(zid));
+            focusLat = s.lat;
+            focusLon = s.lon;
+            focusZoom = 1.75;
+            pulseColor = m.evaluacionTipo === 'alerta' ? '#8B1A1A' : '#1D3A8A';
+            pulsePoints.push({ lat: s.lat, lon: s.lon, size: 42 });
+          }
+          detailHtml = `
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+              <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:800;font-size:14px">${escapeHtml(m.sensorCodigo)} · ${escapeHtml(formatValorUnidad(m.valor, m.unidad))}</span>
+              ${badgeOrigenHtml(m.origen)}
+            </div>
+            <span style="color:#555B66;font-size:12px">${escapeHtml(m.tipo)} · ${escapeHtml(m.zonaNombre)}</span>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+              <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;color:#3F4550">${escapeHtml(m.fechaHora)}</span>
+              ${badgeEvaluacionHtml(m)}
+            </div>
+          `;
+        }
+      } else if (target.type === 'umbral') {
+        const u = currentState.umbrales.find((x) => x.id === target.id);
+        if (u) {
+          const z = currentState.zonas.find((x) => x.id === u.zonaId);
+          if (z) {
+            highlightZonaIds.add(z.id);
+            currentState.sensores
+              .filter((s) => s.zonasIds.includes(z.id) && s.tipo === u.tipo)
+              .forEach((s) => highlightSensores.add(s.codigo));
+            focusLat = z.lat;
+            focusLon = z.lon;
+            focusZoom = z.diametro >= 2000 ? 1.45 : 1.65;
+            pulseColor = u.nivelAlerta === 'Alto' ? '#8B1A1A' : u.nivelAlerta === 'Medio' ? '#B45309' : '#0E7490';
+            pulsePoints.push({ lat: z.lat, lon: z.lon, size: Math.max(36, Math.round(z.diametro * 0.045) + 18) });
+          }
+          const minTxt = u.minimo !== null && u.minimo !== undefined ? formatValorUnidad(u.minimo, u.unidad) : 'Sin mínimo';
+          const maxTxt = u.maximo !== null && u.maximo !== undefined ? formatValorUnidad(u.maximo, u.unidad) : 'Sin máximo';
+          detailHtml = `
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+              <span style="font-weight:800;font-size:14px">${escapeHtml(u.zonaNombre)}</span>
+              ${badgeNivelHtml(u.nivelAlerta)}
+            </div>
+            <span style="color:#555B66;font-size:12px">Tipo de sensor: <strong>${escapeHtml(u.tipo)}</strong></span>
+            <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;color:#3F4550">Mín: ${escapeHtml(minTxt)} · Máx: ${escapeHtml(maxTxt)}</span>
+          `;
+        }
+      } else if (target.type === 'alerta') {
+        const a = currentState.alertas.find((x) => x.codigo === target.codigo);
+        if (a) {
+          const s = currentState.sensores.find((x) => x.codigo === a.sensorCodigo);
+          const z = currentState.zonas.find((x) => x.id === a.zonaId);
+          if (z) highlightZonaIds.add(z.id);
+          if (s) {
+            highlightSensores.add(s.codigo);
+            focusLat = s.lat;
+            focusLon = s.lon;
+            focusZoom = 1.75;
+            pulseColor = '#8B1A1A';
+            pulsePoints.push({ lat: s.lat, lon: s.lon, size: 44 });
+          } else if (z) {
+            focusLat = z.lat;
+            focusLon = z.lon;
+            focusZoom = 1.55;
+            pulseColor = '#8B1A1A';
+            pulsePoints.push({ lat: z.lat, lon: z.lon, size: 44 });
+          }
+          detailHtml = `
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:800;font-size:14px">${escapeHtml(a.codigo)}</span>
+                ${badgeNivelHtml(a.nivel)}
+              </div>
+              ${badgeEstadoAlertaHtml(a.estado)}
+            </div>
+            <span style="font-weight:700;font-size:13px">${escapeHtml(a.zonaNombre)}</span>
+            <span style="color:#555B66;font-size:12px">${escapeHtml(a.sensorCodigo)} · ${escapeHtml(a.condicion)} (${escapeHtml(formatValorUnidad(a.valor, a.unidad))})</span>
+          `;
+        }
+      } else if (target.type === 'refugio') {
+        const r = currentState.refugios.find((x) => x.id === target.id);
+        if (r) {
+          highlightRefugios.add(r.id);
+          focusLat = r.lat;
+          focusLon = r.lon;
+          focusZoom = 1.75;
+          pulseColor = '#0F5F56';
+          pulsePoints.push({ lat: r.lat, lon: r.lon, size: 42 });
+          detailHtml = `
+            <span style="font-weight:800;font-size:14px;color:#0F5F56">${escapeHtml(r.nombre)}</span>
+            <span style="color:#3F4550;font-size:12px">${escapeHtml(r.descripcion || 'Sin descripción')}</span>
+            <span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;color:#555B66">${escapeHtml(formatCoords(r.lat, r.lon))}</span>
+          `;
+        }
+      }
+
+      return {
+        focusLat,
+        focusLon,
+        focusZoom,
+        highlightZonaIds,
+        highlightSensores,
+        highlightRefugios,
+        pulseColor,
+        pulsePoints,
+        detailHtml: detailHtml || '<span style="color:#555B66;font-size:13px">Elemento no encontrado en el mapa.</span>'
+      };
+    };
+
+    const renderLayers = () => {
+      const info = resolveSelection(selectedTarget);
+      const hasSel = Boolean(
+        selectedTarget &&
+        (info.highlightZonaIds.size > 0 || info.highlightSensores.size > 0 || info.highlightRefugios.size > 0)
+      );
+
+      const zonaColors = {
+        Alto: { border: '#8B1A1A', bg: 'rgba(139,26,26,0.20)', badgeBg: '#8B1A1A', label: 'ALTO' },
+        Medio: { border: '#B45309', bg: 'rgba(217,119,6,0.22)', badgeBg: '#B45309', label: 'MEDIO' },
+        Bajo: { border: '#0E7490', bg: 'rgba(14,116,144,0.20)', badgeBg: '#0E7490', label: 'BAJO' }
+      };
+
+      layerZonas.innerHTML = currentState.zonas.map((z) => {
+        const p = project(z.lat, z.lon);
+        const size = Math.max(24, Math.round(z.diametro * 0.045));
+        const half = Math.round(size / 2);
+        const c = zonaColors[z.nivelRiesgo] || zonaColors.Bajo;
+        const isHi = info.highlightZonaIds.has(z.id);
+        const opacity = hasSel ? (isHi ? '1' : '0.35') : '1';
+        const borderW = isHi ? '3px' : '2px';
+        const shadow = isHi ? `0 0 0 4px rgba(29,58,138,0.18)` : 'none';
+        return `<div data-minimap-zona="${escapeHtml(z.id)}" title="${escapeHtml(z.nombre)}" style="position:absolute;left:${p.leftPct.toFixed(1)}%;top:${p.topPct.toFixed(1)}%;width:${size}px;height:${size}px;margin-left:-${half}px;margin-top:-${half}px;border-radius:50%;border:${borderW} solid ${c.border};background:${c.bg};box-sizing:border-box;opacity:${opacity};box-shadow:${shadow};cursor:pointer;transition:opacity 0.2s"><div style="position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:3px;display:flex;align-items:center;gap:4px;white-space:nowrap;background:#FFFFFF;border:1px solid ${isHi ? c.border : '#D5D9E0'};border-radius:6px;padding:1px 4px 1px 6px;font-size:10px;font-weight:700">${escapeHtml(z.nombre.split('–')[0].trim())}<span style="padding:0 4px;border-radius:4px;background:${c.badgeBg};color:#FFFFFF;font-size:9px">${c.label}</span></div></div>`;
+      }).join('');
+
+      // Show non-Baja sensors, plus the currently selected sensor even if it is Baja
+      const visibleSensors = currentState.sensores.filter(
+        (s) => s.estado !== 'Baja' || info.highlightSensores.has(s.codigo)
+      );
+      layerSensores.innerHTML = visibleSensors.map((s) => {
+        const p = project(s.lat, s.lon);
+        const isHi = info.highlightSensores.has(s.codigo);
+        const bg = isHi && selectedTarget?.type === 'alerta'
+          ? '#8B1A1A'
+          : (s.estado === 'Activo' ? '#1D3A8A' : '#5B6170');
+        const opacity = hasSel ? (isHi ? '1' : '0.4') : '1';
+        const scale = isHi ? 'transform:translate(-50%,-13px) scale(1.18);z-index:5;' : 'transform:translate(-50%,-13px);';
+        return `<div style="position:absolute;left:${p.leftPct.toFixed(1)}%;top:${p.topPct.toFixed(1)}%;${scale}display:flex;flex-direction:column;align-items:center;gap:1px;opacity:${opacity};transition:opacity 0.2s"><button type="button" data-minimap-sensor="${escapeHtml(s.codigo)}" aria-label="Sensor ${escapeHtml(s.codigo)}" style="width:26px;height:26px;border-radius:50%;border:2px solid #FFFFFF;background:${bg};color:#FFFFFF;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;box-shadow:0 1px 4px rgba(16,27,54,0.35)"><svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20v-8"/><circle cx="12" cy="9" r="2"/><path d="M7.5 13.5a6.5 6.5 0 0 1 0-9"/><path d="M16.5 4.5a6.5 6.5 0 0 1 0 9"/></svg></button><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10px;font-weight:700;background:#FFFFFF;border:${isHi ? '1.5px solid ' + bg : '1px solid #D5D9E0'};border-radius:4px;padding:0 3px">${escapeHtml(s.codigo)}</span></div>`;
+      }).join('');
+
+      layerRefugios.innerHTML = currentState.refugios.map((r) => {
+        const p = project(r.lat, r.lon);
+        const isHi = info.highlightRefugios.has(r.id);
+        const opacity = hasSel ? (isHi ? '1' : '0.4') : '1';
+        const scale = isHi ? 'transform:translate(-50%,-13px) scale(1.18);z-index:5;' : 'transform:translate(-50%,-13px);';
+        return `<div style="position:absolute;left:${p.leftPct.toFixed(1)}%;top:${p.topPct.toFixed(1)}%;${scale}display:flex;flex-direction:column;align-items:center;gap:1px;opacity:${opacity};transition:opacity 0.2s"><button type="button" data-minimap-refugio="${escapeHtml(r.id)}" aria-label="Refugio ${escapeHtml(r.nombre)}" style="width:26px;height:26px;border-radius:7px;border:2px solid #FFFFFF;background:#0F5F56;color:#FFFFFF;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;box-shadow:0 1px 4px rgba(16,27,54,0.35)"><svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></button><span style="font-size:10px;font-weight:700;background:#FFFFFF;border:${isHi ? '1.5px solid #0F5F56' : '1px solid #D5D9E0'};border-radius:4px;padding:0 3px;white-space:nowrap">${escapeHtml(r.nombre)}</span></div>`;
+      }).join('');
+
+      layerAlertas.innerHTML = currentState.zonas
+        .filter((z) => z.alertasActivasCount > 0)
+        .map((z) => {
+          const p = project(z.lat, z.lon);
+          const rPx = Math.max(12, Math.round((z.diametro * 0.045) / 2));
+          const isHi = !hasSel || info.highlightZonaIds.has(z.id);
+          return `<div style="position:absolute;left:calc(${p.leftPct.toFixed(1)}% + ${Math.round(rPx * 0.45)}px);top:max(8px, calc(${p.topPct.toFixed(1)}% - ${Math.round(rPx * 0.85)}px));display:flex;align-items:center;gap:4px;height:22px;padding:0 7px;border-radius:999px;background:#8B1A1A;color:#FFFFFF;font-weight:800;font-size:11px;border:1.5px solid #FFFFFF;box-shadow:0 2px 5px rgba(16,27,54,0.35);pointer-events:none;opacity:${isHi ? '1' : '0.35'}">${z.alertasActivasCount} ${z.alertasActivasCount === 1 ? 'alerta' : 'alertas'}</div>`;
+        }).join('');
+
+      layerSeleccion.innerHTML = info.pulsePoints.map((pt) => {
+        const p = project(pt.lat, pt.lon);
+        return `<div class="sigri-pulse-ring" style="position:absolute;left:${p.leftPct.toFixed(1)}%;top:${p.topPct.toFixed(1)}%;width:${pt.size}px;height:${pt.size}px;border-radius:50%;border:3px solid ${info.pulseColor};background:rgba(29,58,138,0.10)"></div>`;
+      }).join('');
+
+      if (detailEl) detailEl.innerHTML = info.detailHtml;
+
+      // Bind clicks on mini-map pins/zones
+      if (typeof opts.onMapEntityClick === 'function') {
+        layerZonas.querySelectorAll('[data-minimap-zona]').forEach((el) => {
+          el.addEventListener('click', (e) => {
+            e.stopPropagation();
+            opts.onMapEntityClick({ type: 'zona', id: el.dataset.minimapZona });
+          });
+        });
+        layerSensores.querySelectorAll('[data-minimap-sensor]').forEach((el) => {
+          el.addEventListener('click', (e) => {
+            e.stopPropagation();
+            opts.onMapEntityClick({ type: 'sensor', codigo: el.dataset.minimapSensor });
+          });
+        });
+        layerRefugios.querySelectorAll('[data-minimap-refugio]').forEach((el) => {
+          el.addEventListener('click', (e) => {
+            e.stopPropagation();
+            opts.onMapEntityClick({ type: 'refugio', id: el.dataset.minimapRefugio });
+          });
+        });
+      }
+    };
+
+    const selectTarget = (target, skipZoom) => {
+      selectedTarget = target || null;
+      renderLayers();
+      const info = resolveSelection(selectedTarget);
+      if (!skipZoom) {
+        if (info.focusLat !== null && info.focusLon !== null) {
+          focusCoords(info.focusLat, info.focusLon, info.focusZoom);
+        } else {
+          zoom = 1;
+          panX = 0;
+          panY = 0;
+          applyTransform(true);
+        }
+      }
+    };
+
+    const updateState = (nuevoEstado) => {
+      currentState = nuevoEstado;
+      renderLayers();
+    };
+
+    // Controls: Zoom in/out, Reset, Drag pan, Mouse coords
+    aside.querySelector('[data-minimap-zoom-in]').addEventListener('click', () => {
+      zoom = Math.min(2.5, Number((zoom + 0.25).toFixed(2)));
+      applyTransform(true);
+    });
+    aside.querySelector('[data-minimap-zoom-out]').addEventListener('click', () => {
+      zoom = Math.max(1, Number((zoom - 0.25).toFixed(2)));
+      applyTransform(true);
+    });
+    aside.querySelector('[data-minimap-reset]').addEventListener('click', () => {
+      selectTarget(null);
+      if (typeof opts.onReset === 'function') opts.onReset();
+    });
+
+    let dragging = false;
+    let startX = 0;
+    let startY = 0;
+    viewport.addEventListener('mousedown', (e) => {
+      if (e.target.closest('button, a')) return;
+      dragging = true;
+      startX = e.clientX - panX;
+      startY = e.clientY - panY;
+      viewport.style.cursor = 'grabbing';
+    });
+    window.addEventListener('mousemove', (e) => {
+      if (dragging) {
+        panX = e.clientX - startX;
+        panY = e.clientY - startY;
+        applyTransform(false);
+      }
+    });
+    window.addEventListener('mouseup', () => {
+      if (dragging) {
+        dragging = false;
+        viewport.style.cursor = 'grab';
+      }
+    });
+    mapBox.addEventListener('mousemove', (e) => {
+      if (!coordsEl) return;
+      const rect = viewport.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      const xRel = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      const yRel = Math.max(0, Math.min(1, (e.clientY - rect.top) / rect.height));
+      const lon = -58.000 + xRel * 0.110;
+      const lat = -34.888 - yRel * 0.070;
+      coordsEl.textContent = `Lat ${lat.toFixed(6)} · Lon ${lon.toFixed(6)}`;
+    });
+
+    renderLayers();
+
+    return { middleCol, aside, selectTarget, updateState };
+  }
+
+  function applyRowSelectionStyle(row, isSelected) {
+    if (isSelected) {
+      row.style.backgroundColor = '#F3F6FE';
+      row.style.boxShadow = 'inset 4px 0 0 #1D3A8A';
+    } else {
+      row.style.backgroundColor = '';
+      row.style.boxShadow = '';
+    }
+  }
+
   // ---------------- PAGE: MAPA (index.html) ----------------
   async function initMapaPage() {
     const estado = await apiRequest('GET', '/api/estado');
@@ -1049,13 +1581,44 @@
     const estado = await apiRequest('GET', '/api/estado');
     updateHeaderClock(estado.simulacion);
 
+    let selectedId = null;
+    let userCleared = false;
+    let currentFiltered = [];
+
     const newLink = document.querySelector('a[href^="DlgZona.html"]');
     if (newLink) newLink.href = 'DlgZona.html?mode=new';
 
     const inputSearch = findLabelInput('Buscar zona');
     const selectNivel = findLabelInput('Nivel de riesgo');
     const table = getTableParts();
-    const footerSpan = document.querySelector('main > span');
+
+    let miniMap = null;
+    const syncRowHighlight = () => {
+      Array.from(table.inner.querySelectorAll('[data-row-id]')).forEach((row) => {
+        applyRowSelectionStyle(row, row.dataset.rowId === selectedId);
+      });
+    };
+
+    miniMap = setupSplitLayoutWithMiniMap(estado, {
+      subtitle: 'Seleccioná una zona para marcar su cobertura',
+      onReset: () => {
+        userCleared = true;
+        selectedId = null;
+        syncRowHighlight();
+      },
+      onMapEntityClick: (entity) => {
+        if (entity.type === 'zona') {
+          userCleared = false;
+          selectedId = entity.id;
+          syncRowHighlight();
+          miniMap.selectTarget({ type: 'zona', id: entity.id });
+        } else {
+          miniMap.selectTarget(entity);
+        }
+      }
+    });
+
+    const footerSpan = miniMap?.middleCol.querySelector(':scope > span') || document.querySelector('main > span');
 
     const render = () => {
       const q = (inputSearch?.value || '').trim().toLowerCase();
@@ -1065,6 +1628,11 @@
         const matchN = nivel === 'Todos' || z.nivelRiesgo === nivel;
         return matchQ && matchN;
       });
+      currentFiltered = filtered;
+
+      if (!userCleared && (!selectedId || !filtered.some((z) => z.id === selectedId))) {
+        selectedId = filtered[0]?.id || null;
+      }
 
       clearTableRows(table.inner, table.headerRow);
       if (filtered.length === 0) {
@@ -1075,22 +1643,38 @@
       } else {
         filtered.forEach((z) => {
           const row = document.createElement('div');
-          row.style.cssText = 'display:grid;grid-template-columns:minmax(260px,2.4fr) 110px minmax(190px,1.3fr) 90px 80px 80px 148px;gap:16px;align-items:center;min-height:64px;padding:4px 20px;border-top:1px solid #ECEEF2';
+          row.setAttribute('data-row-selectable', 'true');
+          row.dataset.rowId = z.id;
+          row.style.cssText = 'display:grid;grid-template-columns:minmax(190px,2fr) 95px minmax(150px,1.2fr) 78px 72px 64px 132px;gap:12px;align-items:center;min-height:64px;padding:4px 16px;border-top:1px solid #ECEEF2';
           row.innerHTML = `
             <div style="min-width:0"><div style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:700">${escapeHtml(z.nombre)}</span><span style="color:#555B66;font-size:13px">${escapeHtml(z.descripcion)}</span></div></div>
             <div style="min-width:0">${badgeNivelHtml(z.nivelRiesgo)}</div>
-            <div style="min-width:0"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px">${escapeHtml(formatCoords(z.lat, z.lon))}</span></div>
+            <div style="min-width:0"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px">${escapeHtml(formatCoords(z.lat, z.lon))}</span></div>
             <div style="min-width:0"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px">${escapeHtml(formatMeters(z.diametro))} m</span></div>
             <div style="min-width:0"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px">${escapeHtml(formatMeters(z.radio))} m</span></div>
             <div style="min-width:0"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px">${z.sensoresCount}</span></div>
-            <div style="min-width:0"><div style="display:flex;gap:8px;justify-content:flex-end">
-              <a href="DlgAsociarSensores.html?id=${encodeURIComponent(z.id)}" aria-label="Asociar sensores a ${escapeHtml(z.nombre)}" title="Asociar sensores" style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:12px;background:#EEF0F4;color:#14171F;border:none;cursor:pointer;padding:0">${ICONS.link}</a>
-              <a href="DlgZona.html?id=${encodeURIComponent(z.id)}" aria-label="Modificar ${escapeHtml(z.nombre)}" title="Modificar zona" style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:12px;background:#EEF0F4;color:#14171F;border:none;cursor:pointer;padding:0">${ICONS.edit}</a>
-              <a href="DlgEliminarZona.html?id=${encodeURIComponent(z.id)}" aria-label="Eliminar ${escapeHtml(z.nombre)}" title="Eliminar zona" style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:12px;background:#EEF0F4;color:#8B1A1A;border:none;cursor:pointer;padding:0">${ICONS.trash}</a>
+            <div style="min-width:0"><div style="display:flex;gap:6px;justify-content:flex-end">
+              <a href="DlgAsociarSensores.html?id=${encodeURIComponent(z.id)}" aria-label="Asociar sensores a ${escapeHtml(z.nombre)}" title="Asociar sensores" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:#EEF0F4;color:#14171F;border:none;cursor:pointer;padding:0">${ICONS.link}</a>
+              <a href="DlgZona.html?id=${encodeURIComponent(z.id)}" aria-label="Modificar ${escapeHtml(z.nombre)}" title="Modificar zona" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:#EEF0F4;color:#14171F;border:none;cursor:pointer;padding:0">${ICONS.edit}</a>
+              <a href="DlgEliminarZona.html?id=${encodeURIComponent(z.id)}" aria-label="Eliminar ${escapeHtml(z.nombre)}" title="Eliminar zona" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:#EEF0F4;color:#8B1A1A;border:none;cursor:pointer;padding:0">${ICONS.trash}</a>
             </div></div>
           `;
+          row.addEventListener('click', (e) => {
+            if (e.target.closest('a, button')) return;
+            userCleared = false;
+            selectedId = z.id;
+            syncRowHighlight();
+            miniMap?.selectTarget({ type: 'zona', id: z.id });
+          });
           table.inner.appendChild(row);
         });
+      }
+
+      syncRowHighlight();
+      if (miniMap && selectedId && currentFiltered.some((z) => z.id === selectedId)) {
+        miniMap.selectTarget({ type: 'zona', id: selectedId });
+      } else if (miniMap && !userCleared && filtered.length === 0) {
+        miniMap.selectTarget(null);
       }
 
       if (footerSpan) {
@@ -1100,8 +1684,8 @@
       }
     };
 
-    if (inputSearch) inputSearch.addEventListener('input', render);
-    if (selectNivel) selectNivel.addEventListener('change', render);
+    if (inputSearch) inputSearch.addEventListener('input', () => { userCleared = false; render(); });
+    if (selectNivel) selectNivel.addEventListener('change', () => { userCleared = false; render(); });
     render();
   }
 
@@ -1305,15 +1889,45 @@
     let estado = await apiRequest('GET', '/api/estado');
     updateHeaderClock(estado.simulacion);
 
+    let selectedCodigo = null;
+    let userCleared = false;
+
     const newLink = document.querySelector('a[href^="DlgSensor.html"]');
     if (newLink) newLink.href = 'DlgSensor.html?mode=new';
 
     const inCodigo = findLabelInput('Buscar por código');
     const selEstado = findLabelInput('Estado');
     const selTipo = findLabelInput('Tipo');
-    const chkSinZona = document.querySelector('main input[type="checkbox"]');
     const table = getTableParts();
-    const footerSpan = document.querySelector('main > span');
+
+    let miniMap = null;
+    const syncRowHighlight = () => {
+      Array.from(table.inner.querySelectorAll('[data-row-id]')).forEach((row) => {
+        applyRowSelectionStyle(row, row.dataset.rowId === selectedCodigo);
+      });
+    };
+
+    miniMap = setupSplitLayoutWithMiniMap(estado, {
+      subtitle: 'Seleccioná un sensor para ubicarlo en el mapa',
+      onReset: () => {
+        userCleared = true;
+        selectedCodigo = null;
+        syncRowHighlight();
+      },
+      onMapEntityClick: (entity) => {
+        if (entity.type === 'sensor') {
+          userCleared = false;
+          selectedCodigo = entity.codigo;
+          syncRowHighlight();
+          miniMap.selectTarget({ type: 'sensor', codigo: entity.codigo });
+        } else {
+          miniMap.selectTarget(entity);
+        }
+      }
+    });
+
+    const chkSinZona = miniMap?.middleCol.querySelector('input[type="checkbox"]') || document.querySelector('main input[type="checkbox"]');
+    const footerSpan = miniMap?.middleCol.querySelector(':scope > span') || document.querySelector('main > span');
 
     const render = () => {
       const q = (inCodigo?.value || '').trim().toLowerCase();
@@ -1329,6 +1943,10 @@
         return true;
       });
 
+      if (!userCleared && (!selectedCodigo || !filtered.some((s) => s.codigo === selectedCodigo))) {
+        selectedCodigo = filtered[0]?.codigo || null;
+      }
+
       clearTableRows(table.inner, table.headerRow);
       if (filtered.length === 0) {
         const empty = document.createElement('div');
@@ -1338,25 +1956,34 @@
       } else {
         filtered.forEach((s) => {
           const row = document.createElement('div');
-          row.style.cssText = 'display:grid;grid-template-columns:80px 120px minmax(190px,1.2fr) 150px minmax(210px,1.6fr) 130px 100px;gap:16px;align-items:center;min-height:64px;padding:4px 20px;border-top:1px solid #ECEEF2';
+          row.setAttribute('data-row-selectable', 'true');
+          row.dataset.rowId = s.codigo;
+          row.style.cssText = 'display:grid;grid-template-columns:72px 105px minmax(150px,1.1fr) 128px minmax(150px,1.4fr) 110px 92px;gap:12px;align-items:center;min-height:64px;padding:4px 16px;border-top:1px solid #ECEEF2';
           const zonasHtml = s.zonasNombres.length > 0
             ? escapeHtml(s.zonasNombres.join(', '))
             : '<span style="color:#555B66;font-style:italic">Sin zona asociada</span>';
           const medHtml = s.ultimaMedicion
-            ? `<div style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:700"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px;font-weight:700">${escapeHtml(formatValorUnidad(s.ultimaMedicion.valor, s.unidad))}</span></span><span style="color:#555B66;font-size:13px"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px">${escapeHtml(formatShortDateTime(s.ultimaMedicion.fechaHora))}</span></span></div>`
+            ? `<div style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:700"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px;font-weight:700">${escapeHtml(formatValorUnidad(s.ultimaMedicion.valor, s.unidad))}</span></span><span style="color:#555B66;font-size:12px"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px">${escapeHtml(formatShortDateTime(s.ultimaMedicion.fechaHora))}</span></span></div>`
             : '<span style="color:#555B66">Sin mediciones</span>';
           row.innerHTML = `
             <div style="min-width:0"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:14px;font-weight:700">${escapeHtml(s.codigo)}</span></div>
             <div style="min-width:0">${escapeHtml(s.tipo)}</div>
-            <div style="min-width:0"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px">${escapeHtml(formatCoords(s.lat, s.lon))}</span></div>
+            <div style="min-width:0"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px">${escapeHtml(formatCoords(s.lat, s.lon))}</span></div>
             <div style="min-width:0">${badgeEstadoSensorHtml(s.estado)}</div>
             <div style="min-width:0">${zonasHtml}</div>
             <div style="min-width:0">${medHtml}</div>
-            <div style="min-width:0"><div style="display:flex;gap:8px;justify-content:flex-end">
-              <a href="DlgSensor.html?codigo=${encodeURIComponent(s.codigo)}" aria-label="Modificar ${escapeHtml(s.codigo)}" title="Modificar sensor" style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:12px;background:#EEF0F4;color:#14171F;border:none;cursor:pointer;padding:0">${ICONS.edit}</a>
-              <button type="button" data-delete-sensor="${escapeHtml(s.codigo)}" aria-label="Eliminar ${escapeHtml(s.codigo)}" title="Eliminar sensor" style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:12px;background:#EEF0F4;color:#8B1A1A;border:none;cursor:pointer;padding:0">${ICONS.trash}</button>
+            <div style="min-width:0"><div style="display:flex;gap:6px;justify-content:flex-end">
+              <a href="DlgSensor.html?codigo=${encodeURIComponent(s.codigo)}" aria-label="Modificar ${escapeHtml(s.codigo)}" title="Modificar sensor" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:#EEF0F4;color:#14171F;border:none;cursor:pointer;padding:0">${ICONS.edit}</a>
+              <button type="button" data-delete-sensor="${escapeHtml(s.codigo)}" aria-label="Eliminar ${escapeHtml(s.codigo)}" title="Eliminar sensor" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:#EEF0F4;color:#8B1A1A;border:none;cursor:pointer;padding:0">${ICONS.trash}</button>
             </div></div>
           `;
+          row.addEventListener('click', (e) => {
+            if (e.target.closest('a, button')) return;
+            userCleared = false;
+            selectedCodigo = s.codigo;
+            syncRowHighlight();
+            miniMap?.selectTarget({ type: 'sensor', codigo: s.codigo });
+          });
           table.inner.appendChild(row);
         });
 
@@ -1371,11 +1998,20 @@
               onConfirm: async () => {
                 await apiRequest('DELETE', `/api/sensores/${encodeURIComponent(cod)}`);
                 estado = await apiRequest('GET', '/api/estado');
+                if (selectedCodigo === cod) selectedCodigo = null;
+                miniMap?.updateState(estado);
                 render();
               }
             });
           });
         });
+      }
+
+      syncRowHighlight();
+      if (miniMap && selectedCodigo && filtered.some((s) => s.codigo === selectedCodigo)) {
+        miniMap.selectTarget({ type: 'sensor', codigo: selectedCodigo });
+      } else if (miniMap && !userCleared && filtered.length === 0) {
+        miniMap.selectTarget(null);
       }
 
       if (footerSpan) {
@@ -1386,10 +2022,10 @@
       }
     };
 
-    if (inCodigo) inCodigo.addEventListener('input', render);
-    if (selEstado) selEstado.addEventListener('change', render);
-    if (selTipo) selTipo.addEventListener('change', render);
-    if (chkSinZona) chkSinZona.addEventListener('change', render);
+    if (inCodigo) inCodigo.addEventListener('input', () => { userCleared = false; render(); });
+    if (selEstado) selEstado.addEventListener('change', () => { userCleared = false; render(); });
+    if (selTipo) selTipo.addEventListener('change', () => { userCleared = false; render(); });
+    if (chkSinZona) chkSinZona.addEventListener('change', () => { userCleared = false; render(); });
     render();
   }
 
@@ -1509,12 +2145,45 @@
     let estado = await apiRequest('GET', '/api/estado');
     updateHeaderClock(estado.simulacion);
 
+    let selectedId = null;
+    let userCleared = false;
+    let currentFiltered = [];
+
     const newLink = document.querySelector('a[href^="DlgUmbral.html"]');
     if (newLink) newLink.href = 'DlgUmbral.html?mode=new';
 
     const selZona = findLabelInput('Zona de riesgo');
     const selTipo = findLabelInput('Tipo de sensor');
     const table = getTableParts();
+
+    let miniMap = null;
+    const syncRowHighlight = () => {
+      Array.from(table.inner.querySelectorAll('[data-row-id]')).forEach((row) => {
+        applyRowSelectionStyle(row, row.dataset.rowId === selectedId);
+      });
+    };
+
+    miniMap = setupSplitLayoutWithMiniMap(estado, {
+      subtitle: 'Seleccioná un umbral para ver su zona de aplicación',
+      onReset: () => {
+        userCleared = true;
+        selectedId = null;
+        syncRowHighlight();
+      },
+      onMapEntityClick: (entity) => {
+        if (entity.type === 'zona') {
+          const match = currentFiltered.find((u) => u.zonaId === entity.id);
+          if (match) {
+            userCleared = false;
+            selectedId = match.id;
+            syncRowHighlight();
+            miniMap.selectTarget({ type: 'umbral', id: match.id });
+            return;
+          }
+        }
+        miniMap.selectTarget(entity);
+      }
+    });
 
     const populateZonas = () => {
       if (!selZona) return;
@@ -1534,6 +2203,11 @@
         if (tipo !== 'Todos' && u.tipo !== tipo) return false;
         return true;
       });
+      currentFiltered = filtered;
+
+      if (!userCleared && (!selectedId || !filtered.some((u) => u.id === selectedId))) {
+        selectedId = filtered[0]?.id || null;
+      }
 
       clearTableRows(table.inner, table.headerRow);
       if (filtered.length === 0) {
@@ -1544,7 +2218,9 @@
       } else {
         filtered.forEach((u) => {
           const row = document.createElement('div');
-          row.style.cssText = 'display:grid;grid-template-columns:minmax(260px,2fr) minmax(140px,1fr) 130px 130px 130px 100px;gap:16px;align-items:center;min-height:64px;padding:4px 20px;border-top:1px solid #ECEEF2';
+          row.setAttribute('data-row-selectable', 'true');
+          row.dataset.rowId = u.id;
+          row.style.cssText = 'display:grid;grid-template-columns:minmax(180px,1.8fr) minmax(110px,1fr) 105px 105px 100px 92px;gap:12px;align-items:center;min-height:64px;padding:4px 16px;border-top:1px solid #ECEEF2';
           const minHtml = u.minimo !== null && u.minimo !== undefined
             ? `<span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px">${escapeHtml(formatValorUnidad(u.minimo, u.unidad))}</span>`
             : '<span style="color:#555B66">Sin mínimo</span>';
@@ -1557,11 +2233,18 @@
             <div style="min-width:0">${minHtml}</div>
             <div style="min-width:0">${maxHtml}</div>
             <div style="min-width:0">${badgeNivelHtml(u.nivelAlerta)}</div>
-            <div style="min-width:0"><div style="display:flex;gap:8px;justify-content:flex-end">
-              <a href="DlgUmbral.html?id=${encodeURIComponent(u.id)}" aria-label="Modificar umbral" title="Modificar umbral" style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:12px;background:#EEF0F4;color:#14171F;border:none;cursor:pointer;padding:0">${ICONS.edit}</a>
-              <button type="button" data-delete-umbral="${escapeHtml(u.id)}" aria-label="Eliminar umbral" title="Eliminar umbral" style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:12px;background:#EEF0F4;color:#8B1A1A;border:none;cursor:pointer;padding:0">${ICONS.trash}</button>
+            <div style="min-width:0"><div style="display:flex;gap:6px;justify-content:flex-end">
+              <a href="DlgUmbral.html?id=${encodeURIComponent(u.id)}" aria-label="Modificar umbral" title="Modificar umbral" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:#EEF0F4;color:#14171F;border:none;cursor:pointer;padding:0">${ICONS.edit}</a>
+              <button type="button" data-delete-umbral="${escapeHtml(u.id)}" aria-label="Eliminar umbral" title="Eliminar umbral" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:#EEF0F4;color:#8B1A1A;border:none;cursor:pointer;padding:0">${ICONS.trash}</button>
             </div></div>
           `;
+          row.addEventListener('click', (e) => {
+            if (e.target.closest('a, button')) return;
+            userCleared = false;
+            selectedId = u.id;
+            syncRowHighlight();
+            miniMap?.selectTarget({ type: 'umbral', id: u.id });
+          });
           table.inner.appendChild(row);
         });
 
@@ -1577,6 +2260,8 @@
               onConfirm: async () => {
                 await apiRequest('DELETE', `/api/umbrales/${encodeURIComponent(id)}`);
                 estado = await apiRequest('GET', '/api/estado');
+                if (selectedId === id) selectedId = null;
+                miniMap?.updateState(estado);
                 populateZonas();
                 render();
               }
@@ -1584,11 +2269,18 @@
           });
         });
       }
+
+      syncRowHighlight();
+      if (miniMap && selectedId && filtered.some((u) => u.id === selectedId)) {
+        miniMap.selectTarget({ type: 'umbral', id: selectedId });
+      } else if (miniMap && !userCleared && filtered.length === 0) {
+        miniMap.selectTarget(null);
+      }
     };
 
     populateZonas();
-    if (selZona) selZona.addEventListener('change', render);
-    if (selTipo) selTipo.addEventListener('change', render);
+    if (selZona) selZona.addEventListener('change', () => { userCleared = false; render(); });
+    if (selTipo) selTipo.addEventListener('change', () => { userCleared = false; render(); });
     render();
   }
 
@@ -1711,14 +2403,49 @@
     let estado = await apiRequest('GET', '/api/estado');
     updateHeaderClock(estado.simulacion);
 
+    let selectedId = null;
+    let userCleared = false;
+    let currentFiltered = [];
+
     const selSensor = findLabelInput('Sensor');
     const selZona = findLabelInput('Zona');
     const inDesde = findLabelInput('Desde');
     const inHasta = findLabelInput('Hasta');
     const btnLimpiar = Array.from(document.querySelectorAll('main button')).find((b) => b.textContent.trim() === 'Limpiar filtros');
 
-    // Simulation banner
+    // Simulation banner (query before wrapping into split column)
     const banner = document.querySelector('main > div:nth-child(2)');
+    const table = getTableParts();
+
+    let miniMap = null;
+    const syncRowHighlight = () => {
+      Array.from(table.inner.querySelectorAll('[data-row-id]')).forEach((row) => {
+        applyRowSelectionStyle(row, row.dataset.rowId === selectedId);
+      });
+    };
+
+    miniMap = setupSplitLayoutWithMiniMap(estado, {
+      subtitle: 'Seleccioná una medición para ubicar su sensor',
+      onReset: () => {
+        userCleared = true;
+        selectedId = null;
+        syncRowHighlight();
+      },
+      onMapEntityClick: (entity) => {
+        if (entity.type === 'sensor') {
+          const match = currentFiltered.find((m) => m.sensorCodigo === entity.codigo);
+          if (match) {
+            userCleared = false;
+            selectedId = match.id;
+            syncRowHighlight();
+            miniMap.selectTarget({ type: 'medicion', id: match.id });
+            return;
+          }
+        }
+        miniMap.selectTarget(entity);
+      }
+    });
+
     if (banner) {
       const statusBadge = Array.from(banner.querySelectorAll('span')).find((s) => s.textContent.trim() === 'En ejecución' || s.textContent.trim() === 'Pausada');
       const simSubtitle = Array.from(banner.querySelectorAll('span')).find((s) => s.textContent.includes('Genera mediciones para los sensores activos'));
@@ -1766,8 +2493,6 @@
       inHasta.value = estado.simulacion.fechaISO;
     }
 
-    const table = getTableParts();
-
     const render = () => {
       const fSensor = selSensor?.value || 'Todos';
       const fZona = selZona?.value || 'Todas';
@@ -1781,6 +2506,11 @@
         if (fHasta && m.fechaISO > fHasta) return false;
         return true;
       });
+      currentFiltered = filtered;
+
+      if (!userCleared && (!selectedId || !filtered.some((m) => m.id === selectedId))) {
+        selectedId = filtered[0]?.id || null;
+      }
 
       clearTableRows(table.inner, table.headerRow);
       if (filtered.length === 0) {
@@ -1791,34 +2521,51 @@
       } else {
         filtered.forEach((m) => {
           const row = document.createElement('div');
-          row.style.cssText = 'display:grid;grid-template-columns:170px 70px 120px minmax(210px,1.6fr) 100px 110px 180px;gap:16px;align-items:center;min-height:64px;padding:4px 20px;border-top:1px solid #ECEEF2';
+          row.setAttribute('data-row-selectable', 'true');
+          row.dataset.rowId = m.id;
+          row.style.cssText = 'display:grid;grid-template-columns:145px 65px 105px minmax(150px,1.4fr) 88px 98px 155px;gap:12px;align-items:center;min-height:64px;padding:4px 16px;border-top:1px solid #ECEEF2';
           const zonaHtml = m.zonaNombre === 'Sin zona asociada'
             ? '<span style="color:#555B66;font-style:italic">Sin zona asociada</span>'
             : escapeHtml(m.zonaNombre);
           row.innerHTML = `
-            <div style="min-width:0"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px">${escapeHtml(m.fechaHora)}</span></div>
+            <div style="min-width:0"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px">${escapeHtml(m.fechaHora)}</span></div>
             <div style="min-width:0"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px;font-weight:700">${escapeHtml(m.sensorCodigo)}</span></div>
             <div style="min-width:0">${escapeHtml(m.tipo)}</div>
             <div style="min-width:0">${zonaHtml}</div>
-            <div style="min-width:0"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:14px;font-weight:700">${escapeHtml(formatValorUnidad(m.valor, m.unidad))}</span></div>
+            <div style="min-width:0"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px;font-weight:700">${escapeHtml(formatValorUnidad(m.valor, m.unidad))}</span></div>
             <div style="min-width:0">${badgeOrigenHtml(m.origen)}</div>
             <div style="min-width:0">${badgeEvaluacionHtml(m)}</div>
           `;
+          row.addEventListener('click', (e) => {
+            if (e.target.closest('a, button')) return;
+            userCleared = false;
+            selectedId = m.id;
+            syncRowHighlight();
+            miniMap?.selectTarget({ type: 'medicion', id: m.id });
+          });
           table.inner.appendChild(row);
         });
       }
+
+      syncRowHighlight();
+      if (miniMap && selectedId && filtered.some((m) => m.id === selectedId)) {
+        miniMap.selectTarget({ type: 'medicion', id: selectedId });
+      } else if (miniMap && !userCleared && filtered.length === 0) {
+        miniMap.selectTarget(null);
+      }
     };
 
-    if (selSensor) selSensor.addEventListener('change', render);
-    if (selZona) selZona.addEventListener('change', render);
-    if (inDesde) inDesde.addEventListener('change', render);
-    if (inHasta) inHasta.addEventListener('change', render);
+    if (selSensor) selSensor.addEventListener('change', () => { userCleared = false; render(); });
+    if (selZona) selZona.addEventListener('change', () => { userCleared = false; render(); });
+    if (inDesde) inDesde.addEventListener('change', () => { userCleared = false; render(); });
+    if (inHasta) inHasta.addEventListener('change', () => { userCleared = false; render(); });
     if (btnLimpiar) {
       btnLimpiar.addEventListener('click', () => {
         if (selSensor) selSensor.value = 'Todos';
         if (selZona) selZona.value = 'Todas';
         if (inDesde) inDesde.value = '';
         if (inHasta) inHasta.value = '';
+        userCleared = false;
         render();
       });
     }
@@ -2024,13 +2771,56 @@
     const estado = await apiRequest('GET', '/api/estado');
     updateHeaderClock(estado.simulacion);
 
+    let selectedCodigo = codigoParam || null;
+    let userCleared = false;
+    let currentFiltered = [];
+
     const selZona = findLabelInput('Zona de riesgo');
     const selSensor = findLabelInput('Sensor');
     const selEstado = findLabelInput('Estado');
     const inDesde = findLabelInput('Desde');
     const inHasta = findLabelInput('Hasta');
     const table = getTableParts();
-    const footerSpan = document.querySelector('main > span');
+
+    let miniMap = null;
+    const syncRowHighlight = () => {
+      Array.from(table.inner.querySelectorAll('[data-row-id]')).forEach((row) => {
+        applyRowSelectionStyle(row, row.dataset.rowId === selectedCodigo);
+      });
+    };
+
+    miniMap = setupSplitLayoutWithMiniMap(estado, {
+      subtitle: 'Seleccioná una alerta para ubicar el foco en el mapa',
+      onReset: () => {
+        userCleared = true;
+        selectedCodigo = null;
+        syncRowHighlight();
+      },
+      onMapEntityClick: (entity) => {
+        if (entity.type === 'sensor') {
+          const match = currentFiltered.find((a) => a.sensorCodigo === entity.codigo);
+          if (match) {
+            userCleared = false;
+            selectedCodigo = match.codigo;
+            syncRowHighlight();
+            miniMap.selectTarget({ type: 'alerta', codigo: match.codigo });
+            return;
+          }
+        } else if (entity.type === 'zona') {
+          const match = currentFiltered.find((a) => a.zonaId === entity.id);
+          if (match) {
+            userCleared = false;
+            selectedCodigo = match.codigo;
+            syncRowHighlight();
+            miniMap.selectTarget({ type: 'alerta', codigo: match.codigo });
+            return;
+          }
+        }
+        miniMap.selectTarget(entity);
+      }
+    });
+
+    const footerSpan = miniMap?.middleCol.querySelector(':scope > span') || document.querySelector('main > span');
 
     if (selZona) {
       selZona.innerHTML = '<option value="Todas">Todas</option>' +
@@ -2062,6 +2852,11 @@
         if (fHasta && a.fechaISO > fHasta) return false;
         return true;
       });
+      currentFiltered = filtered;
+
+      if (!userCleared && (!selectedCodigo || !filtered.some((a) => a.codigo === selectedCodigo))) {
+        selectedCodigo = filtered[0]?.codigo || null;
+      }
 
       clearTableRows(table.inner, table.headerRow);
       if (filtered.length === 0) {
@@ -2072,19 +2867,36 @@
       } else {
         filtered.forEach((a) => {
           const row = document.createElement('div');
-          const highlight = codigoParam && a.codigo === codigoParam ? 'background:#F3F6FE;' : '';
-          row.style.cssText = `display:grid;grid-template-columns:150px 80px minmax(280px,2.4fr) 70px 100px 120px 170px;gap:16px;align-items:center;min-height:64px;padding:4px 20px;border-top:1px solid #ECEEF2;${highlight}`;
+          row.setAttribute('data-row-selectable', 'true');
+          row.dataset.rowId = a.codigo;
+          row.style.cssText = 'display:grid;grid-template-columns:135px 72px minmax(190px,2fr) 64px 88px 108px 142px;gap:12px;align-items:center;min-height:64px;padding:4px 16px;border-top:1px solid #ECEEF2';
           row.innerHTML = `
-            <div style="min-width:0"><div style="display:flex;flex-direction:column;gap:2px"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:14px;font-weight:700">${escapeHtml(a.codigo)}</span><span style="color:#555B66;font-size:12px;font-family:'JetBrains Mono',ui-monospace,monospace">${escapeHtml(a.fechaHora)}</span></div></div>
+            <div style="min-width:0"><div style="display:flex;flex-direction:column;gap:2px"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:14px;font-weight:700">${escapeHtml(a.codigo)}</span><span style="color:#555B66;font-size:11px;font-family:'JetBrains Mono',ui-monospace,monospace">${escapeHtml(a.fechaHora)}</span></div></div>
             <div style="min-width:0">${badgeNivelHtml(a.nivel)}</div>
-            <div style="min-width:0"><div style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:700">${escapeHtml(a.zonaNombre)}</span><span style="color:#555B66;font-size:13px">${escapeHtml(a.condicion)}</span></div></div>
+            <div style="min-width:0"><div style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:700">${escapeHtml(a.zonaNombre)}</span><span style="color:#555B66;font-size:12px">${escapeHtml(a.condicion)}</span></div></div>
             <div style="min-width:0"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px;font-weight:700">${escapeHtml(a.sensorCodigo)}</span></div>
-            <div style="min-width:0"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:14px;font-weight:700">${escapeHtml(formatValorUnidad(a.valor, a.unidad))}</span></div>
+            <div style="min-width:0"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px;font-weight:700">${escapeHtml(formatValorUnidad(a.valor, a.unidad))}</span></div>
             <div style="min-width:0">${badgeEstadoAlertaHtml(a.estado)}</div>
-            <div style="min-width:0"><div style="display:flex;gap:8px;justify-content:flex-end"><a href="DlgEstadoAlerta.html?codigo=${encodeURIComponent(a.codigo)}" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 18px;border-radius:12px;font-weight:700;font-size:14px;white-space:nowrap;background:#E8EAEF;color:#14171F">Actualizar estado</a></div></div>
+            <div style="min-width:0"><div style="display:flex;gap:6px;justify-content:flex-end"><a href="DlgEstadoAlerta.html?codigo=${encodeURIComponent(a.codigo)}" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;height:40px;padding:0 12px;border-radius:10px;font-weight:700;font-size:13px;white-space:nowrap;background:#E8EAEF;color:#14171F">Actualizar estado</a></div></div>
           `;
+          row.addEventListener('click', (e) => {
+            if (e.target.closest('a, button')) return;
+            userCleared = false;
+            selectedCodigo = a.codigo;
+            syncRowHighlight();
+            miniMap?.selectTarget({ type: 'alerta', codigo: a.codigo });
+          });
           table.inner.appendChild(row);
         });
+      }
+
+      syncRowHighlight();
+      if (miniMap && selectedCodigo && filtered.some((a) => a.codigo === selectedCodigo)) {
+        miniMap.selectTarget({ type: 'alerta', codigo: selectedCodigo });
+      } else if (miniMap && zonaParam && fZona === zonaParam) {
+        miniMap.selectTarget({ type: 'zona', id: zonaParam });
+      } else if (miniMap && !userCleared && filtered.length === 0) {
+        miniMap.selectTarget(null);
       }
 
       if (footerSpan) {
@@ -2093,11 +2905,11 @@
       }
     };
 
-    if (selZona) selZona.addEventListener('change', render);
-    if (selSensor) selSensor.addEventListener('change', render);
-    if (selEstado) selEstado.addEventListener('change', render);
-    if (inDesde) inDesde.addEventListener('change', render);
-    if (inHasta) inHasta.addEventListener('change', render);
+    if (selZona) selZona.addEventListener('change', () => { userCleared = false; render(); });
+    if (selSensor) selSensor.addEventListener('change', () => { userCleared = false; render(); });
+    if (selEstado) selEstado.addEventListener('change', () => { userCleared = false; render(); });
+    if (inDesde) inDesde.addEventListener('change', () => { userCleared = false; render(); });
+    if (inHasta) inHasta.addEventListener('change', () => { userCleared = false; render(); });
     render();
   }
 
@@ -2172,9 +2984,38 @@
     let estado = await apiRequest('GET', '/api/estado');
     updateHeaderClock(estado.simulacion);
 
+    let selectedId = null;
+    let userCleared = false;
+
     const inSearch = findLabelInput('Buscar refugio');
     const btnNuevo = Array.from(document.querySelectorAll('a')).find((a) => a.textContent.includes('Nuevo refugio'));
     const table = getTableParts();
+
+    let miniMap = null;
+    const syncRowHighlight = () => {
+      Array.from(table.inner.querySelectorAll('[data-row-id]')).forEach((row) => {
+        applyRowSelectionStyle(row, row.dataset.rowId === selectedId);
+      });
+    };
+
+    miniMap = setupSplitLayoutWithMiniMap(estado, {
+      subtitle: 'Seleccioná un refugio para ubicarlo en el mapa',
+      onReset: () => {
+        userCleared = true;
+        selectedId = null;
+        syncRowHighlight();
+      },
+      onMapEntityClick: (entity) => {
+        if (entity.type === 'refugio') {
+          userCleared = false;
+          selectedId = entity.id;
+          syncRowHighlight();
+          miniMap.selectTarget({ type: 'refugio', id: entity.id });
+        } else {
+          miniMap.selectTarget(entity);
+        }
+      }
+    });
 
     const openRefugioModal = (refugio) => {
       const existing = document.getElementById('sigri-dynamic-modal');
@@ -2213,13 +3054,17 @@
           lon: overlay.querySelector('[data-field="lon"]').value
         };
         try {
+          let saved;
           if (isEdit) {
-            await apiRequest('PUT', `/api/refugios/${encodeURIComponent(refugio.id)}`, payload);
+            saved = await apiRequest('PUT', `/api/refugios/${encodeURIComponent(refugio.id)}`, payload);
           } else {
-            await apiRequest('POST', '/api/refugios', payload);
+            saved = await apiRequest('POST', '/api/refugios', payload);
           }
           overlay.remove();
           estado = await apiRequest('GET', '/api/estado');
+          userCleared = false;
+          selectedId = saved?.id || refugio?.id || null;
+          miniMap?.updateState(estado);
           render();
         } catch (err) {
           const p = err.payload || {};
@@ -2234,6 +3079,10 @@
         return !q || r.nombre.toLowerCase().includes(q) || (r.descripcion || '').toLowerCase().includes(q);
       });
 
+      if (!userCleared && (!selectedId || !filtered.some((r) => r.id === selectedId))) {
+        selectedId = filtered[0]?.id || null;
+      }
+
       clearTableRows(table.inner, table.headerRow);
       if (filtered.length === 0) {
         const empty = document.createElement('div');
@@ -2243,16 +3092,25 @@
       } else {
         filtered.forEach((r) => {
           const row = document.createElement('div');
-          row.style.cssText = 'display:grid;grid-template-columns:minmax(240px,1.4fr) minmax(280px,2fr) minmax(200px,1fr) 100px;gap:16px;align-items:center;min-height:64px;padding:4px 20px;border-top:1px solid #ECEEF2';
+          row.setAttribute('data-row-selectable', 'true');
+          row.dataset.rowId = r.id;
+          row.style.cssText = 'display:grid;grid-template-columns:minmax(160px,1.3fr) minmax(190px,1.8fr) minmax(150px,1fr) 92px;gap:12px;align-items:center;min-height:64px;padding:4px 16px;border-top:1px solid #ECEEF2';
           row.innerHTML = `
             <div style="min-width:0"><span style="font-weight:700">${escapeHtml(r.nombre)}</span></div>
             <div style="min-width:0"><span style="color:#555B66">${escapeHtml(r.descripcion)}</span></div>
-            <div style="min-width:0"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px">${escapeHtml(formatCoords(r.lat, r.lon))}</span></div>
-            <div style="min-width:0"><div style="display:flex;gap:8px;justify-content:flex-end">
-              <button type="button" data-edit-refugio="${escapeHtml(r.id)}" aria-label="Modificar ${escapeHtml(r.nombre)}" title="Modificar refugio" style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:12px;background:#EEF0F4;color:#14171F;border:none;cursor:pointer;padding:0">${ICONS.edit}</button>
-              <button type="button" data-delete-refugio="${escapeHtml(r.id)}" aria-label="Eliminar ${escapeHtml(r.nombre)}" title="Eliminar refugio" style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:12px;background:#EEF0F4;color:#8B1A1A;border:none;cursor:pointer;padding:0">${ICONS.trash}</button>
+            <div style="min-width:0"><span style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px">${escapeHtml(formatCoords(r.lat, r.lon))}</span></div>
+            <div style="min-width:0"><div style="display:flex;gap:6px;justify-content:flex-end">
+              <button type="button" data-edit-refugio="${escapeHtml(r.id)}" aria-label="Modificar ${escapeHtml(r.nombre)}" title="Modificar refugio" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:#EEF0F4;color:#14171F;border:none;cursor:pointer;padding:0">${ICONS.edit}</button>
+              <button type="button" data-delete-refugio="${escapeHtml(r.id)}" aria-label="Eliminar ${escapeHtml(r.nombre)}" title="Eliminar refugio" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:#EEF0F4;color:#8B1A1A;border:none;cursor:pointer;padding:0">${ICONS.trash}</button>
             </div></div>
           `;
+          row.addEventListener('click', (e) => {
+            if (e.target.closest('a, button')) return;
+            userCleared = false;
+            selectedId = r.id;
+            syncRowHighlight();
+            miniMap?.selectTarget({ type: 'refugio', id: r.id });
+          });
           table.inner.appendChild(row);
         });
 
@@ -2275,11 +3133,20 @@
               onConfirm: async () => {
                 await apiRequest('DELETE', `/api/refugios/${encodeURIComponent(r.id)}`);
                 estado = await apiRequest('GET', '/api/estado');
+                if (selectedId === r.id) selectedId = null;
+                miniMap?.updateState(estado);
                 render();
               }
             });
           });
         });
+      }
+
+      syncRowHighlight();
+      if (miniMap && selectedId && filtered.some((r) => r.id === selectedId)) {
+        miniMap.selectTarget({ type: 'refugio', id: selectedId });
+      } else if (miniMap && !userCleared && filtered.length === 0) {
+        miniMap.selectTarget(null);
       }
     };
 
@@ -2289,7 +3156,7 @@
         openRefugioModal(null);
       });
     }
-    if (inSearch) inSearch.addEventListener('input', render);
+    if (inSearch) inSearch.addEventListener('input', () => { userCleared = false; render(); });
     render();
   }
 
